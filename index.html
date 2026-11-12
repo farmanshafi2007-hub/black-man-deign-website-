@@ -1,0 +1,3159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lumora — Independent Design & Engineering Studio</title>
+  <meta name="description" content="Lumora is an independent studio crafting brands, products, and the systems that connect them — bold ideas, shipped with quiet precision." />
+  <meta name="theme-color" content="#0a0a0a" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Onest:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    /* ==========================================================================
+       1. TOKENS, RESET & ADAPTIVE REM GRID
+       ========================================================================== */
+    :root {
+      --background: #ffffff;
+      --foreground: #111111;
+      --ink: #0a0a0a;
+      --muted: #8d8d8d;
+      --subtle: #b6b6b6;
+      --line: #e6e5e2;
+      --surface: #f1f0ee;
+      --surface-2: #e3e2df;
+      --accent: #b15f2c;
+      --accent-from: #cf8047;
+      --accent-to: #97501f;
+      --hero-from: #ecebe9;
+      --hero-to: #c9c9c9;
+
+      --radius-pill: 9999px;
+      --radius-card: 2rem;
+      --radius-card-sm: 1.25rem;
+      --radius-control: 0.875rem;
+      --text-watermark: 13rem;
+      --container-shell: 88rem;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { font-size: 16px; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+    body {
+      background: var(--background);
+      color: var(--foreground);
+      font-family: 'Onest', sans-serif;
+      overflow-x: hidden;
+      line-height: 1.5;
+    }
+    a { color: inherit; text-decoration: none; }
+    button { font: inherit; color: inherit; background: none; border: none; cursor: pointer; }
+    ul { list-style: none; }
+    img { display: block; }
+
+    .sr-only {
+      position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+      overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0;
+    }
+    :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+    /* Adaptive Grid Breakpoints (16 * 100 / baseWidth vw) */
+    @media (max-width: 1920px) { html { font-size: 0.833333vw; } }
+    @media (max-width: 1440px) { html { font-size: 1.111111vw; } }
+    @media (max-width: 1024px) { html { font-size: 1.5625vw; } }
+    @media (max-width: 640px)  { html { font-size: 4.444444vw; } }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation: none !important;
+        transition: none !important;
+      }
+    }
+
+    /* ==========================================================================
+       2. LAYOUT SHELL & SHARED COMPONENTS
+       ========================================================================== */
+    .shell {
+      max-width: var(--container-shell);
+      margin-inline: auto;
+    }
+
+    .skip-link {
+      position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+      overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0;
+    }
+    .skip-link:focus {
+      position: fixed; left: 1rem; top: 1rem; z-index: 60;
+      width: auto; height: auto; margin: 0; clip: auto; white-space: normal;
+      border-radius: var(--radius-control);
+      background: var(--ink); padding: 0.5rem 1rem;
+      font-size: 0.875rem; color: #fff;
+    }
+
+    /* Eyebrow */
+    .eyebrow {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      font-size: 0.875rem; font-weight: 500;
+    }
+    .eyebrow__dot {
+      width: 0.375rem; height: 0.375rem; border-radius: var(--radius-pill);
+      flex-shrink: 0;
+    }
+    .eyebrow--dark { color: rgba(17, 17, 17, 0.7); }
+    .eyebrow--dark .eyebrow__dot { background: rgba(17, 17, 17, 0.5); }
+    .eyebrow--light { color: rgba(255, 255, 255, 0.7); }
+    .eyebrow--light .eyebrow__dot { background: rgba(255, 255, 255, 0.6); }
+    .eyebrow--pill {
+      border: 1px solid var(--line);
+      border-radius: var(--radius-pill);
+      padding: 0.375rem 1rem;
+    }
+
+    /* PillButton */
+    .pill-btn {
+      display: inline-block;
+      will-change: transform;
+    }
+    .pill-btn__inner {
+      display: inline-flex; align-items: center; gap: 0.75rem;
+      border-radius: var(--radius-pill);
+      font-size: 0.875rem; font-weight: 500;
+      padding: 0.875rem 1.75rem;
+      transition: background-color 0.25s ease, border-color 0.25s ease;
+    }
+    .pill-btn--arrow .pill-btn__inner {
+      padding: 0.375rem 0.375rem 0.375rem 1.5rem;
+    }
+    .pill-btn--dark .pill-btn__inner { background: var(--ink); color: #fff; }
+    .pill-btn--light .pill-btn__inner { background: var(--surface); color: var(--foreground); }
+    .pill-btn--outline .pill-btn__inner {
+      border: 1px solid var(--line); background: transparent; color: var(--foreground);
+    }
+    .pill-btn--outline:hover .pill-btn__inner { border-color: rgba(17, 17, 17, 0.3); }
+
+    .pill-btn__badge {
+      width: 2.25rem; height: 2.25rem;
+      display: grid; place-items: center;
+      border-radius: var(--radius-pill);
+      font-size: 1rem;
+      flex-shrink: 0;
+    }
+    .pill-btn--dark .pill-btn__badge { background: #fff; color: var(--ink); }
+    .pill-btn--light .pill-btn__badge,
+    .pill-btn--outline .pill-btn__badge { background: var(--ink); color: #fff; }
+    .pill-btn__icon {
+      display: grid; place-items: center;
+      will-change: transform;
+    }
+
+    /* TagChip */
+    .tag-chip {
+      display: inline-flex;
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      color: #fff;
+      border-radius: var(--radius-pill);
+      padding: 0.5rem 1rem;
+      font-size: 0.875rem;
+      line-height: 1.2;
+    }
+
+    /* AnimatedLink */
+    .anim-link {
+      display: inline-flex;
+    }
+    .anim-link__inner {
+      display: inline-block;
+      opacity: 0.65;
+      will-change: transform, opacity;
+    }
+    .anim-link--legal .anim-link__inner {
+      opacity: 0.7;
+    }
+
+    /* Text & Block Reveal Utilities */
+    .line-clip {
+      display: block;
+      overflow: hidden;
+      padding-bottom: 0.08em;
+      margin-bottom: -0.08em;
+    }
+    .line-inner {
+      display: block;
+      transform: translateY(105%);
+      opacity: 0;
+      will-change: transform, opacity;
+      transition: transform 900ms cubic-bezier(0.215, 0.61, 0.355, 1),
+                  opacity 900ms cubic-bezier(0.215, 0.61, 0.355, 1);
+    }
+    .is-revealed .line-inner {
+      transform: translateY(0%);
+      opacity: 1;
+    }
+
+    .word-inner {
+      display: inline-block;
+      transform: translateY(1.5rem);
+      opacity: 0;
+      will-change: transform, opacity;
+      transition: transform 700ms cubic-bezier(0.165, 0.84, 0.44, 1),
+                  opacity 700ms cubic-bezier(0.165, 0.84, 0.44, 1);
+    }
+    .is-revealed .word-inner {
+      transform: translateY(0);
+      opacity: 1;
+    }
+
+    .spring-reveal {
+      opacity: 0;
+      will-change: transform, opacity;
+    }
+
+    /* ==========================================================================
+       3. PAGE LOADER
+       ========================================================================== */
+    .page-loader {
+      position: fixed; inset: 0; z-index: 120;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      gap: 2rem;
+      background: var(--ink);
+      color: #fff;
+      border-radius: 0 0 var(--radius-card) var(--radius-card);
+      will-change: transform;
+    }
+    .page-loader__content {
+      display: flex; flex-direction: column; align-items: center; text-align: center;
+      gap: 1.25rem;
+      will-change: transform, opacity;
+    }
+    .page-loader__brand {
+      display: flex; align-items: center; gap: 0.625rem;
+      font-weight: 600; font-size: 1.5rem; letter-spacing: -0.02em;
+    }
+    @media (min-width: 640px) {
+      .page-loader__brand { font-size: 1.875rem; }
+    }
+    .page-loader__mark {
+      font-size: 1.875rem; color: var(--accent-from); display: grid; place-items: center;
+    }
+    .page-loader__tagline {
+      max-width: 24ch; font-size: 0.875rem; line-height: 1.5;
+      color: rgba(255, 255, 255, 0.55);
+    }
+    .page-loader__progress {
+      width: min(22rem, 72vw);
+      display: flex; flex-direction: column; gap: 0.75rem;
+    }
+    .page-loader__track {
+      height: 1px; width: 100%;
+      background: rgba(255, 255, 255, 0.15);
+      overflow: hidden;
+    }
+    .page-loader__fill {
+      height: 100%; width: 0%;
+      background: var(--accent-from);
+      transition: width 0.1s ease-out;
+    }
+    .page-loader__meta {
+      display: flex; justify-content: space-between; align-items: center;
+      font-size: 0.75rem; font-weight: 500; text-transform: uppercase; letter-spacing: 0.05em;
+      color: rgba(255, 255, 255, 0.45);
+    }
+    .page-loader__num {
+      font-variant-numeric: tabular-nums;
+      color: rgba(255, 255, 255, 0.8);
+    }
+
+    /* ==========================================================================
+       4. HEADER
+       ========================================================================== */
+    .site-header {
+      position: absolute; inset-inline: 0; top: 0; z-index: 50;
+      opacity: 0;
+      transform: translateY(-0.875rem);
+      will-change: transform, opacity;
+    }
+    .site-header__inner {
+      display: flex; align-items: center; justify-content: space-between; gap: 1.5rem;
+      padding: 1.25rem;
+    }
+    @media (min-width: 640px) {
+      .site-header__inner { padding: 1.5rem 2rem; }
+    }
+    .brand-btn__inner {
+      display: flex; align-items: center; gap: 0.5rem;
+      font-size: 1.125rem; font-weight: 600; letter-spacing: -0.01em;
+      will-change: transform;
+    }
+    .brand-btn__mark {
+      font-size: 1.25rem; color: var(--accent); display: grid; place-items: center;
+    }
+
+    .primary-nav {
+      display: none;
+    }
+    @media (min-width: 1024px) {
+      .primary-nav { display: block; }
+    }
+    .primary-nav__list {
+      display: flex; align-items: center; gap: 2rem;
+      font-size: 0.875rem; font-weight: 500;
+    }
+    .primary-nav__label {
+      display: inline-flex; align-items: center; gap: 0.25rem;
+      opacity: 0.8;
+      will-change: transform, opacity;
+    }
+    .primary-nav__btn[aria-current="page"] .primary-nav__label {
+      opacity: 1;
+    }
+    .primary-nav__caret {
+      font-size: 0.75rem; opacity: 0.6;
+    }
+
+    .header-actions {
+      display: flex; align-items: center; gap: 0.5rem;
+    }
+    .clock-chip {
+      display: none;
+      align-items: center; gap: 0.75rem;
+      border: 1px solid rgba(230, 229, 226, 0.8);
+      background: rgba(255, 255, 255, 0.4);
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+      border-radius: var(--radius-control);
+      padding: 0.5rem 0.75rem;
+      font-size: 0.75rem;
+      color: rgba(17, 17, 17, 0.7);
+    }
+    @media (min-width: 768px) {
+      .clock-chip { display: flex; }
+    }
+    .clock-chip__label { color: rgba(17, 17, 17, 0.45); }
+    .clock-chip__time {
+      min-width: 3.5rem; font-variant-numeric: tabular-nums;
+      font-weight: 500; color: var(--foreground);
+    }
+    .clock-chip__dot { color: rgba(17, 17, 17, 0.3); }
+    .clock-chip__date { font-weight: 500; }
+
+    .menu-btn {
+      border: 1px solid rgba(230, 229, 226, 0.8);
+      background: rgba(255, 255, 255, 0.4);
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+      border-radius: var(--radius-control);
+      transition: background-color 0.2s ease;
+    }
+    .menu-btn:hover {
+      background: rgba(255, 255, 255, 0.7);
+    }
+    .menu-btn__inner {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      padding: 0.5rem 0.75rem;
+      font-size: 0.75rem; font-weight: 500;
+      text-transform: uppercase; letter-spacing: 0.05em;
+      will-change: transform;
+    }
+    @media (min-width: 640px) {
+      .menu-btn__inner { padding: 0.5rem 1rem; }
+    }
+    .menu-btn__icon { font-size: 0.875rem; display: grid; place-items: center; }
+    .menu-btn__text { display: none; }
+    @media (min-width: 640px) {
+      .menu-btn__text { display: inline; }
+    }
+
+    /* ==========================================================================
+       5. HERO SECTION (#home)
+       ========================================================================== */
+    .hero {
+      position: relative;
+      isolation: isolate;
+      overflow: hidden;
+      border-radius: 0 0 var(--radius-card) var(--radius-card);
+      background: var(--hero-to);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .hero__media {
+      position: absolute; inset: 0; z-index: 0;
+    }
+    .hero__img {
+      position: absolute; inset: 0; width: 100%; height: 100%;
+      object-fit: cover;
+    }
+    .hero__canvas {
+      position: absolute; inset: 0; width: 100%; height: 100%;
+      pointer-events: none;
+    }
+    .hero__vignette {
+      position: absolute; inset: 0; z-index: 1; pointer-events: none;
+      background: linear-gradient(to bottom, rgba(255, 255, 255, 0.35), transparent, rgba(255, 255, 255, 0.35));
+    }
+    .hero__watermark {
+      pointer-events: none; position: absolute; inset-inline: 0; bottom: 7rem; z-index: 1;
+      text-align: center; user-select: none;
+      font-weight: 700; line-height: 1;
+      font-size: var(--text-watermark);
+      color: rgba(255, 255, 255, 0.4);
+      opacity: 0;
+      transform: translateY(1.25rem);
+      will-change: transform, opacity;
+      white-space: nowrap;
+      overflow: hidden;
+    }
+    @media (max-width: 640px) {
+      .hero__watermark { font-size: 5.5rem; bottom: 5.5rem; }
+    }
+
+    .hero__grid {
+      position: relative; z-index: 20;
+      width: 100%;
+      display: flex; flex-direction: column; gap: 2rem;
+      padding: 7rem 1.25rem 5rem;
+    }
+    @media (min-width: 640px) {
+      .hero__grid { padding-inline: 2rem; }
+    }
+    @media (min-width: 1024px) {
+      .hero__grid {
+        display: grid;
+        min-height: calc(100lvh - 3.75rem);
+        grid-template-columns: repeat(12, 1fr);
+        align-items: center;
+        gap: 2.5rem;
+        padding: 9rem 2rem 7rem;
+      }
+    }
+
+    .hero__left {
+      display: flex; flex-direction: column; gap: 1.75rem;
+    }
+    @media (min-width: 1024px) {
+      .hero__left { grid-column: span 7; }
+    }
+
+    .hero__title {
+      max-width: 18ch;
+      font-size: 2.25rem; font-weight: 600;
+      line-height: 0.98; letter-spacing: -0.02em;
+    }
+    @media (min-width: 640px) { .hero__title { font-size: 3rem; } }
+    @media (min-width: 768px) { .hero__title { font-size: 3.75rem; } }
+
+    .hero__rating {
+      display: flex; align-items: center; gap: 0.75rem;
+    }
+    .hero__stars {
+      display: inline-flex; align-items: center; gap: 0.125rem;
+      color: var(--accent); font-size: 1rem;
+    }
+    .hero__rating-text {
+      font-size: 0.875rem; font-weight: 500; color: rgba(17, 17, 17, 0.7);
+    }
+    .hero__ctas {
+      display: flex; flex-wrap: wrap; gap: 0.75rem;
+    }
+
+    .hero__right {
+      display: flex; flex-direction: column; align-items: flex-start; gap: 2rem;
+    }
+    @media (min-width: 1024px) {
+      .hero__right { grid-column: span 5; align-items: flex-end; }
+    }
+
+    /* Hero Carousel Card */
+    .hero-card {
+      width: 100%; max-width: 24rem;
+      border-radius: var(--radius-card-sm);
+      background: rgba(255, 255, 255, 0.7);
+      padding: 0.5rem;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04), 0 0 0 1px rgba(230, 229, 226, 0.7);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+    }
+    @media (min-width: 1024px) {
+      .hero-card { width: 19rem; max-width: 19rem; }
+    }
+    .hero-card__row {
+      display: flex; gap: 0.5rem; cursor: pointer;
+      border-radius: var(--radius-control);
+    }
+    .hero-card__tile {
+      aspect-ratio: 1 / 1; width: 6rem; flex-shrink: 0;
+      display: grid; place-items: center;
+      border-radius: var(--radius-control);
+      background: var(--ink);
+      font-size: 1.875rem; color: var(--accent-from);
+    }
+    .hero-card__panel {
+      flex: 1;
+      border-radius: var(--radius-control);
+      background: rgba(241, 240, 238, 0.7);
+      padding: 0.75rem;
+      display: flex; flex-direction: column; justify-content: space-between;
+      min-width: 0;
+    }
+    .hero-card__slot {
+      position: relative;
+      min-height: 3.25rem;
+      overflow: hidden;
+    }
+    .hero-card__slide {
+      position: absolute; inset: 0;
+      display: flex; flex-direction: column; justify-content: flex-start;
+      will-change: transform, opacity;
+    }
+    .hero-card__caption {
+      font-size: 0.65rem; font-weight: 500; text-transform: uppercase;
+      letter-spacing: 0.05em; color: rgba(17, 17, 17, 0.45);
+    }
+    .hero-card__heading {
+      max-width: 8.5rem;
+      font-size: 0.875rem; font-weight: 500; line-height: 1.35;
+      margin-top: 0.125rem;
+    }
+    .hero-card__controls {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-top: 0.5rem;
+    }
+    .hero-card__dots {
+      display: flex; align-items: center; gap: 0.25rem;
+    }
+    .hero-card__dot {
+      height: 0.25rem; width: 0.375rem;
+      border-radius: var(--radius-pill);
+      background: rgba(17, 17, 17, 0.2);
+      transition: all 0.3s ease;
+    }
+    .hero-card__dot.is-active {
+      width: 1rem;
+      background: rgba(17, 17, 17, 0.7);
+    }
+    .hero-card__arrows {
+      display: flex; align-items: center; gap: 0.25rem;
+    }
+    .hero-card__nav-btn {
+      width: 1.75rem; height: 1.75rem;
+      display: grid; place-items: center;
+      border-radius: var(--radius-pill);
+      background: #fff;
+      color: rgba(17, 17, 17, 0.7);
+      box-shadow: 0 0 0 1px var(--line);
+      font-size: 0.75rem;
+      transition: color 0.2s ease, background-color 0.2s ease;
+    }
+    .hero-card__nav-btn:hover { color: var(--foreground); }
+    .hero-card__nav-btn--prev svg { transform: rotate(180deg); }
+
+    /* Partners */
+    .partners {
+      width: 100%; max-width: 24rem;
+    }
+    @media (min-width: 1024px) {
+      .partners { width: 19rem; max-width: 19rem; }
+    }
+    .partners__label {
+      margin-bottom: 0.75rem;
+      font-size: 0.75rem; font-weight: 500;
+      color: rgba(17, 17, 17, 0.45);
+      text-align: left;
+    }
+    @media (min-width: 1024px) {
+      .partners__label { text-align: right; }
+    }
+    .partners__grid {
+      display: grid; grid-template-columns: repeat(4, 1fr);
+      column-gap: 1rem; row-gap: 0.75rem;
+    }
+    @media (max-width: 420px) {
+      .partners__grid { grid-template-columns: repeat(3, 1fr); }
+    }
+    .partner-item {
+      display: flex; align-items: center; gap: 0.375rem;
+      font-size: 0.75rem; color: rgba(17, 17, 17, 0.7);
+      opacity: 0.7;
+      will-change: transform, opacity;
+      cursor: default;
+    }
+    .partner-item__icon {
+      font-size: 0.875rem; color: rgba(17, 17, 17, 0.4);
+      display: grid; place-items: center; flex-shrink: 0;
+    }
+
+    /* Hero Bottom Status Bar */
+    .hero__footer {
+      position: relative; z-index: 20; width: 100%;
+    }
+    .hero__footer-inner {
+      display: flex; align-items: center; justify-content: space-between; gap: 0.75rem;
+      border-top: 1px solid rgba(17, 17, 17, 0.1);
+      padding: 1.25rem;
+      font-size: 0.75rem; font-weight: 500;
+      text-transform: uppercase; letter-spacing: 0.025em;
+      color: rgba(17, 17, 17, 0.6);
+    }
+    @media (min-width: 640px) {
+      .hero__footer-inner { padding-inline: 2rem; }
+    }
+    .hero__footer-mid { display: none; }
+    @media (min-width: 640px) {
+      .hero__footer-mid { display: inline; }
+    }
+    .hero__footer-scroll {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+    }
+
+    /* ==========================================================================
+       6. ABOUT SECTION (#about)
+       ========================================================================== */
+    .about { background: var(--background); }
+    .about__grid {
+      display: grid; grid-template-columns: 1fr; align-items: center;
+      gap: 3rem; padding: 5rem 1.25rem;
+    }
+    @media (min-width: 640px) {
+      .about__grid { padding-inline: 2rem; }
+    }
+    @media (min-width: 1024px) {
+      .about__grid { grid-template-columns: 1fr 1fr; padding-block: 7rem; }
+    }
+
+    .about__left {
+      position: relative; min-height: 14rem;
+      display: flex; flex-direction: column; justify-content: space-between;
+    }
+    @media (min-width: 1024px) {
+      .about__left { min-height: 20rem; }
+    }
+    .about__bg-globe {
+      position: absolute; left: -1rem; top: 50%; transform: translateY(-50%);
+      font-size: 12rem; color: rgba(17, 17, 17, 0.1);
+      pointer-events: none; line-height: 1;
+    }
+    @media (min-width: 640px) { .about__bg-globe { font-size: 16rem; } }
+    @media (min-width: 1024px) { .about__bg-globe { left: -1.5rem; font-size: 20rem; } }
+
+    .about__eyebrow { position: relative; z-index: 1; }
+    .about__note {
+      position: relative; z-index: 1;
+      display: flex; align-items: center; gap: 0.75rem;
+      font-size: 0.875rem; color: rgba(17, 17, 17, 0.7);
+      margin-top: 3rem;
+    }
+    .about__note-icon {
+      font-size: 1.5rem; color: var(--foreground);
+      display: grid; place-items: center; flex-shrink: 0;
+    }
+    .about__note-text { max-width: 14rem; }
+
+    .about__right {
+      display: flex; flex-direction: column; gap: 2.5rem;
+    }
+    .about__statement {
+      font-size: 1.5rem; font-weight: 500; line-height: 1.35; letter-spacing: -0.01em;
+    }
+    @media (min-width: 640px) {
+      .about__statement { font-size: 1.875rem; }
+    }
+    .about__statement-muted { color: var(--muted); }
+
+    .about__footer {
+      display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between;
+      gap: 1.5rem; border-top: 1px solid var(--line); padding-top: 1.5rem;
+    }
+    .about__social-label {
+      font-size: 0.875rem; color: rgba(17, 17, 17, 0.45);
+      margin-bottom: 0.625rem;
+    }
+    .about__socials { display: flex; gap: 0.5rem; }
+    .social-chip {
+      width: 2.25rem; height: 2.25rem;
+      display: grid; place-items: center;
+      border-radius: var(--radius-pill);
+      font-size: 0.875rem;
+      background: var(--surface); color: rgba(17, 17, 17, 0.7);
+    }
+    .social-chip--accent {
+      background: var(--accent); color: #fff;
+    }
+    .social-chip__icon {
+      display: grid; place-items: center; will-change: transform;
+    }
+
+    /* ==========================================================================
+       7. CREATE BAND ("We Build -> Better")
+       ========================================================================== */
+    .create-band { background: var(--background); }
+    .create-band__list {
+      display: flex; flex-direction: column; gap: 0.75rem;
+      padding: 2.5rem 1.25rem;
+    }
+    @media (min-width: 640px) {
+      .create-band__list {
+        flex-direction: row; gap: 1rem; padding-inline: 2rem;
+      }
+    }
+    .create-band__item { flex: 1; }
+    .create-tile {
+      display: grid; place-items: center;
+      height: 6rem;
+      border-radius: var(--radius-pill);
+      font-size: 1.875rem; font-weight: 500;
+      will-change: transform;
+      user-select: none;
+    }
+    @media (min-width: 640px) {
+      .create-tile { height: 10rem; font-size: 2.25rem; }
+    }
+    .create-tile--light { background: var(--surface); color: var(--foreground); }
+    .create-tile--accent {
+      background: linear-gradient(to bottom right, var(--accent-from), var(--accent-to));
+      color: #fff;
+    }
+    .create-tile--dark { background: var(--ink); color: #fff; font-size: 2.25rem; }
+    @media (min-width: 640px) {
+      .create-tile--dark { font-size: 3rem; }
+    }
+    .create-tile--ghost {
+      background: rgba(241, 240, 238, 0.6);
+      color: rgba(17, 17, 17, 0.35);
+    }
+
+    /* ==========================================================================
+       8. PORTFOLIO (#works)
+       ========================================================================== */
+    .portfolio { background: var(--background); }
+    .portfolio__inner {
+      padding: 2.5rem 1.25rem 5rem;
+    }
+    @media (min-width: 640px) {
+      .portfolio__inner { padding-inline: 2rem; }
+    }
+    @media (min-width: 1024px) {
+      .portfolio__inner { padding-bottom: 7rem; }
+    }
+    .portfolio__header {
+      display: flex; flex-direction: column; align-items: center; text-align: center;
+      gap: 1.25rem; margin-bottom: 3rem;
+    }
+    @media (min-width: 640px) {
+      .portfolio__header { margin-bottom: 3.5rem; }
+    }
+    .portfolio__title {
+      width: fit-content;
+      font-size: 2.25rem; font-weight: 600; letter-spacing: -0.02em; line-height: 1.1;
+    }
+    @media (min-width: 640px) {
+      .portfolio__title { font-size: 3rem; }
+    }
+
+    .portfolio__grid {
+      display: grid; grid-template-columns: 1fr; gap: 1.5rem;
+    }
+    @media (min-width: 768px) {
+      .portfolio__grid { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    .work-card {
+      position: relative;
+      min-height: 22rem;
+      overflow: hidden;
+      border-radius: var(--radius-card);
+      background: var(--ink);
+      padding: 1.5rem;
+      color: #fff;
+      box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.05);
+      display: flex; flex-direction: column; justify-content: space-between;
+      will-change: transform;
+    }
+    @media (min-width: 640px) {
+      .work-card { min-height: 26rem; padding: 2rem; }
+    }
+    .work-card__top {
+      position: relative; z-index: 2;
+      display: flex; align-items: center; justify-content: space-between;
+      font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.025em;
+      color: rgba(255, 255, 255, 0.45);
+    }
+    .work-card__badge {
+      width: 2.75rem; height: 2.75rem;
+      display: grid; place-items: center;
+      border-radius: var(--radius-pill);
+      background: rgba(255, 255, 255, 0.1);
+      color: #fff;
+      box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.15);
+      font-size: 1.125rem;
+      will-change: transform;
+    }
+    .work-card__mark {
+      position: absolute; inset: 0; z-index: 1;
+      display: grid; place-items: center;
+      pointer-events: none;
+    }
+    .work-card__mark-inner {
+      display: inline-flex; align-items: flex-start; gap: 0.125rem;
+      font-size: 4.5rem; color: rgba(255, 255, 255, 0.9);
+    }
+    .work-card__reg {
+      font-size: 0.75rem; color: rgba(255, 255, 255, 0.6);
+      margin-top: 0.5rem;
+    }
+    .work-card__bottom {
+      position: relative; z-index: 2;
+      margin-top: auto;
+    }
+    .work-card__name {
+      font-size: 1.5rem; font-weight: 500; letter-spacing: -0.01em;
+    }
+    @media (min-width: 640px) {
+      .work-card__name { font-size: 1.875rem; }
+    }
+    .work-card__desc {
+      margin-top: 0.5rem; max-width: 28rem;
+      font-size: 0.875rem; color: rgba(255, 255, 255, 0.55);
+    }
+    .work-card__tags {
+      margin-top: 1.25rem;
+      display: flex; flex-wrap: wrap; gap: 0.5rem;
+    }
+
+    /* ==========================================================================
+       9. SERVICES (#services)
+       ========================================================================== */
+    .services { background: var(--background); }
+    .services__inner {
+      padding: 5rem 1.25rem;
+    }
+    @media (min-width: 640px) {
+      .services__inner { padding-inline: 2rem; }
+    }
+    @media (min-width: 1024px) {
+      .services__inner { padding-block: 7rem; }
+    }
+    .services__title {
+      margin: 1.25rem 0 3rem;
+      max-width: 16ch;
+      font-size: 2.25rem; font-weight: 600; letter-spacing: -0.02em; line-height: 1.1;
+    }
+    @media (min-width: 640px) {
+      .services__title { margin-bottom: 3.5rem; font-size: 3rem; }
+    }
+
+    .services__item {
+      border-top: 1px solid var(--line);
+    }
+    .services__item:first-child { border-top: none; }
+
+    .service-row {
+      display: flex; align-items: center; gap: 1rem;
+      border-radius: var(--radius-card-sm);
+      padding-block: 1.5rem;
+      padding-left: 1.5rem;
+      padding-right: 1.5rem;
+      background-color: rgba(241, 240, 238, 0);
+      will-change: background-color, padding;
+    }
+    @media (min-width: 640px) {
+      .service-row { gap: 1.5rem; padding-block: 2rem; }
+    }
+    .service-row__num {
+      width: 1.75rem; flex-shrink: 0;
+      font-size: 0.875rem; font-weight: 500; color: rgba(17, 17, 17, 0.4);
+    }
+    @media (min-width: 640px) {
+      .service-row__num { width: 2.5rem; }
+    }
+    .service-row__name {
+      flex: 1;
+      font-size: 1.5rem; font-weight: 500; letter-spacing: -0.01em;
+    }
+    @media (min-width: 640px) { .service-row__name { font-size: 1.875rem; } }
+    @media (min-width: 768px) { .service-row__name { font-size: 2.25rem; } }
+
+    .service-row__desc {
+      display: none;
+      max-width: 20rem;
+      font-size: 0.875rem; color: rgba(17, 17, 17, 0.55);
+    }
+    @media (min-width: 1024px) {
+      .service-row__desc { display: block; }
+    }
+    .service-row__badge {
+      width: 2.5rem; height: 2.5rem; flex-shrink: 0;
+      display: grid; place-items: center;
+      border-radius: var(--radius-pill);
+      background: var(--ink); color: #fff;
+      font-size: 1rem;
+      will-change: transform;
+    }
+    @media (min-width: 640px) {
+      .service-row__badge { width: 3rem; height: 3rem; }
+    }
+
+    /* ==========================================================================
+       10. STATS PANEL
+       ========================================================================== */
+    .stats { background: var(--background); }
+    .stats__outer {
+      padding: 0 1.25rem 5rem;
+    }
+    @media (min-width: 640px) {
+      .stats__outer { padding-inline: 2rem; }
+    }
+    @media (min-width: 1024px) {
+      .stats__outer { padding-bottom: 7rem; }
+    }
+    .stats__panel {
+      border-radius: var(--radius-card);
+      background: var(--ink);
+      padding: 3rem 1.5rem;
+      color: #fff;
+    }
+    @media (min-width: 640px) {
+      .stats__panel { padding: 4rem 2rem; }
+    }
+    @media (min-width: 768px) {
+      .stats__panel { padding-inline: 4rem; }
+    }
+    .stats__title {
+      margin-top: 1rem;
+      max-width: 20ch;
+      font-size: 1.875rem; font-weight: 500; letter-spacing: -0.01em; line-height: 1.2;
+    }
+    @media (min-width: 768px) {
+      .stats__title { font-size: 2.25rem; }
+    }
+    .stats__grid {
+      margin-top: 3.5rem;
+      display: grid; grid-template-columns: repeat(2, 1fr);
+      column-gap: 2rem; row-gap: 3rem;
+    }
+    @media (min-width: 1024px) {
+      .stats__grid { grid-template-columns: repeat(4, 1fr); }
+    }
+    .stat-item__value {
+      font-size: 3rem; font-weight: 600; letter-spacing: -0.02em; line-height: 1;
+      font-variant-numeric: tabular-nums;
+    }
+    @media (min-width: 640px) { .stat-item__value { font-size: 3.75rem; } }
+    @media (min-width: 768px) { .stat-item__value { font-size: 4.5rem; } }
+
+    .stat-item__label {
+      margin-top: 0.75rem;
+      font-size: 0.875rem; color: rgba(255, 255, 255, 0.55);
+    }
+
+    /* ==========================================================================
+       11. FOOTER
+       ========================================================================== */
+    .site-footer {
+      position: relative;
+      overflow: hidden;
+      border-radius: var(--radius-card) var(--radius-card) 0 0;
+      background: var(--ink);
+      color: #fff;
+    }
+    .site-footer__inner {
+      position: relative; z-index: 10;
+      padding: 5rem 1.25rem 2.5rem;
+    }
+    @media (min-width: 640px) {
+      .site-footer__inner { padding-inline: 2rem; }
+    }
+    @media (min-width: 1024px) {
+      .site-footer__inner { padding-top: 6rem; }
+    }
+
+    .footer-cta {
+      display: flex; flex-direction: column; gap: 2rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      padding-bottom: 4rem;
+    }
+    @media (min-width: 1024px) {
+      .footer-cta {
+        flex-direction: row; align-items: flex-end; justify-content: space-between;
+      }
+    }
+    .footer-cta__title {
+      max-width: 16ch;
+      font-size: 2.25rem; font-weight: 600; letter-spacing: -0.02em; line-height: 1.05;
+    }
+    @media (min-width: 640px) { .footer-cta__title { font-size: 3rem; } }
+    @media (min-width: 768px) { .footer-cta__title { font-size: 3.75rem; } }
+
+    .footer-cols {
+      display: grid; grid-template-columns: 1fr; gap: 3rem;
+      padding-block: 4rem;
+    }
+    @media (min-width: 768px) {
+      .footer-cols { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (min-width: 1024px) {
+      .footer-cols { grid-template-columns: repeat(4, 1fr); }
+    }
+    .footer-brand__logo {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      font-size: 1.125rem; font-weight: 600;
+    }
+    .footer-brand__mark {
+      font-size: 1.25rem; color: var(--accent-from); display: grid; place-items: center;
+    }
+    .footer-brand__tagline {
+      margin-top: 1rem; max-width: 20rem;
+      font-size: 0.875rem; color: rgba(255, 255, 255, 0.55);
+    }
+    .footer-col__title {
+      font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.025em;
+      color: rgba(255, 255, 255, 0.4);
+      margin-bottom: 1.25rem;
+    }
+    .footer-col__list {
+      display: flex; flex-direction: column; gap: 0.75rem;
+      font-size: 0.875rem;
+    }
+
+    .footer-legal {
+      display: flex; flex-direction: column; align-items: center; justify-content: space-between;
+      gap: 1rem; border-top: 1px solid rgba(255, 255, 255, 0.1);
+      padding-top: 2rem; font-size: 0.75rem; color: rgba(255, 255, 255, 0.45);
+    }
+    @media (min-width: 640px) {
+      .footer-legal { flex-direction: row; }
+    }
+    .footer-legal__links {
+      display: flex; align-items: center; gap: 1.5rem;
+    }
+
+    .site-footer__watermark {
+      position: absolute; inset-inline: 0; bottom: -1.5rem; z-index: 0;
+      text-align: center; pointer-events: none; user-select: none;
+      font-weight: 700; line-height: 1;
+      font-size: var(--text-watermark);
+      color: rgba(255, 255, 255, 0.05);
+      white-space: nowrap;
+    }
+    @media (max-width: 640px) {
+      .site-footer__watermark { font-size: 5.5rem; bottom: -0.75rem; }
+    }
+
+    /* ==========================================================================
+       12. NAV MENU OVERLAY
+       ========================================================================== */
+    .nav-overlay {
+      position: fixed; inset: 0; z-index: 115;
+      display: none; flex-direction: column;
+      background: var(--ink); color: #fff;
+      opacity: 0;
+      will-change: opacity;
+    }
+    .nav-overlay.is-mounted { display: flex; }
+
+    .nav-overlay__top {
+      width: 100%;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 1.25rem;
+    }
+    @media (min-width: 640px) {
+      .nav-overlay__top { padding: 1.5rem 2rem; }
+    }
+    .nav-overlay__brand {
+      display: flex; align-items: center; gap: 0.5rem;
+      font-size: 1.125rem; font-weight: 600;
+    }
+    .nav-overlay__mark {
+      font-size: 1.25rem; color: var(--accent-from); display: grid; place-items: center;
+    }
+    .nav-overlay__close {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: var(--radius-control);
+      padding: 0.5rem 1rem;
+      font-size: 0.75rem; font-weight: 500;
+      text-transform: uppercase; letter-spacing: 0.05em;
+      color: rgba(255, 255, 255, 0.7);
+      transition: border-color 0.2s ease, color 0.2s ease;
+    }
+    .nav-overlay__close:hover {
+      border-color: rgba(255, 255, 255, 0.4);
+      color: #fff;
+    }
+
+    .nav-overlay__main {
+      width: 100%; flex: 1;
+      display: flex; flex-direction: column; justify-content: center;
+      padding-inline: 1.25rem;
+    }
+    @media (min-width: 640px) {
+      .nav-overlay__main { padding-inline: 2rem; }
+    }
+    .nav-overlay__list {
+      display: flex; flex-direction: column; gap: 0.25rem;
+    }
+    .nav-overlay__item-btn {
+      width: 100%;
+      display: flex; align-items: baseline; gap: 1rem;
+      padding-block: 0.5rem;
+      text-align: left;
+      font-size: 2.25rem; font-weight: 600; letter-spacing: -0.02em; line-height: 1.15;
+      transform: translateY(1rem);
+      opacity: 0;
+      transition: transform 0.5s ease-out, opacity 0.5s ease-out;
+    }
+    @media (min-width: 640px) {
+      .nav-overlay__item-btn { font-size: 3.75rem; }
+    }
+    .nav-overlay.is-open .nav-overlay__item-btn {
+      transform: translateY(0);
+      opacity: 1;
+    }
+    .nav-overlay__num {
+      font-size: 1rem; font-weight: 400;
+      color: rgba(255, 255, 255, 0.3);
+      transition: color 0.3s ease;
+    }
+    .nav-overlay__label {
+      color: rgba(255, 255, 255, 0.7);
+      transition: color 0.3s ease;
+    }
+    .nav-overlay__item-btn:hover .nav-overlay__num { color: var(--accent-from); }
+    .nav-overlay__item-btn:hover .nav-overlay__label { color: #fff; }
+
+    .nav-overlay__bottom {
+      width: 100%;
+      display: flex; flex-direction: column; gap: 0.75rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 1.5rem 1.25rem;
+      font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.025em;
+      color: rgba(255, 255, 255, 0.45);
+    }
+    @media (min-width: 640px) {
+      .nav-overlay__bottom {
+        flex-direction: row; align-items: center; justify-content: space-between;
+        padding-inline: 2rem;
+      }
+    }
+    .nav-overlay__cta {
+      color: rgba(255, 255, 255, 0.7);
+      text-transform: uppercase; letter-spacing: 0.025em;
+      transition: color 0.2s ease;
+    }
+    .nav-overlay__cta:hover {
+      color: #fff; text-decoration: underline;
+    }
+
+    /* ==========================================================================
+       13. REQUEST MODAL OVERLAY
+       ========================================================================== */
+    .modal-backdrop {
+      position: fixed; inset: 0; z-index: 110;
+      display: none; align-items: flex-end; justify-content: center;
+      padding: 1rem;
+      background: rgba(17, 17, 17, 0.3);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      opacity: 0;
+      will-change: opacity;
+    }
+    @media (min-width: 640px) {
+      .modal-backdrop { align-items: center; }
+    }
+    .modal-backdrop.is-mounted { display: flex; }
+
+    .modal-panel {
+      position: relative; width: 100%; max-width: 32rem;
+      overflow: hidden;
+      border-radius: var(--radius-card);
+      background: #fff;
+      padding: 1.5rem;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25), 0 0 0 1px var(--line);
+      opacity: 0;
+      transform: translateY(1.75rem);
+      will-change: transform, opacity;
+    }
+    @media (min-width: 640px) {
+      .modal-panel { padding: 2rem; }
+    }
+    .modal-close {
+      position: absolute; right: 1rem; top: 1rem;
+      width: 2.25rem; height: 2.25rem;
+      display: grid; place-items: center;
+      border-radius: var(--radius-pill);
+      background: var(--surface);
+      color: rgba(17, 17, 17, 0.6);
+      font-size: 0.875rem;
+      transition: background-color 0.2s ease, color 0.2s ease;
+    }
+    .modal-close:hover {
+      background: var(--surface-2);
+      color: var(--foreground);
+    }
+
+    .modal-header {
+      margin-bottom: 1.5rem;
+      display: flex; flex-direction: column; gap: 0.375rem;
+    }
+    .modal-eyebrow {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      font-size: 0.875rem; font-weight: 500; color: rgba(17, 17, 17, 0.6);
+    }
+    .modal-eyebrow__dot {
+      width: 0.375rem; height: 0.375rem;
+      border-radius: var(--radius-pill);
+      background: var(--accent);
+    }
+    .modal-title {
+      font-size: 1.5rem; font-weight: 600; letter-spacing: -0.01em;
+    }
+    @media (min-width: 640px) {
+      .modal-title { font-size: 1.875rem; }
+    }
+
+    .modal-form {
+      display: flex; flex-direction: column; gap: 1rem;
+    }
+    .field {
+      display: flex; flex-direction: column; gap: 0.375rem;
+    }
+    .field__label {
+      font-size: 0.75rem; font-weight: 500; text-transform: uppercase;
+      letter-spacing: 0.025em; color: rgba(17, 17, 17, 0.5);
+    }
+    .field__control {
+      width: 100%;
+      border: 1px solid var(--line);
+      background: rgba(241, 240, 238, 0.5);
+      border-radius: var(--radius-control);
+      padding: 0.75rem 1rem;
+      font-family: inherit;
+      font-size: 0.875rem;
+      color: var(--foreground);
+      outline: none;
+      transition: border-color 0.2s ease, background-color 0.2s ease;
+    }
+    .field__control:focus {
+      border-color: rgba(17, 17, 17, 0.3);
+      background: #fff;
+    }
+    textarea.field__control { resize: none; }
+
+    .modal-footer {
+      margin-top: 0.5rem;
+      display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between;
+      gap: 1rem;
+    }
+    .modal-note {
+      font-size: 0.75rem; color: rgba(17, 17, 17, 0.45);
+    }
+
+    .modal-success {
+      display: none; flex-direction: column; align-items: center; text-align: center;
+      padding-block: 2rem; gap: 1rem;
+    }
+    .modal-success.is-active { display: flex; }
+    .modal-form-wrap.is-hidden { display: none; }
+
+    .modal-success__badge {
+      width: 3.5rem; height: 3.5rem;
+      display: grid; place-items: center;
+      border-radius: var(--radius-pill);
+      background: var(--ink);
+      color: var(--accent-from);
+      font-size: 1.5rem;
+    }
+    .modal-success__title {
+      font-size: 1.5rem; font-weight: 600;
+    }
+    .modal-success__desc {
+      max-width: 32ch;
+      font-size: 0.875rem; color: rgba(17, 17, 17, 0.6);
+    }
+  </style>
+</head>
+<body>
+  <!-- Skip Link -->
+  <a href="#main" class="skip-link">Skip to content</a>
+
+  <!-- ========================================================================
+       PAGE LOADER
+       ======================================================================== -->
+  <div id="pageLoader" class="page-loader" role="status" aria-live="polite">
+    <div id="loaderContent" class="page-loader__content">
+      <div class="page-loader__brand">
+        <span class="page-loader__mark" aria-hidden="true">
+          <svg width="1em" height="1em" viewBox="0 0 48 48" fill="currentColor">
+            <path d="M24 2c2.2 13.8 7.9 19.6 22 22-14.1 2.4-19.8 8.2-22 22-2.2-13.8-7.9-19.6-22-22 14.1-2.4 19.8-8.2 22-22Z"/>
+          </svg>
+        </span>
+        <span>Lumora</span>
+      </div>
+      <p class="page-loader__tagline">Bold ideas, shipped with quiet precision.</p>
+    </div>
+    <div class="page-loader__progress">
+      <div class="page-loader__track">
+        <div id="loaderFill" class="page-loader__fill"></div>
+      </div>
+      <div class="page-loader__meta">
+        <span>Loading</span>
+        <span id="loaderNum" class="page-loader__num">000</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================================================
+       HEADER (FIXED OVERLAY)
+       ======================================================================== -->
+  <header id="siteHeader" class="site-header">
+    <div class="shell site-header__inner">
+      <!-- Left: Brand -->
+      <button type="button" class="brand-btn" data-scroll-target="home" aria-label="Lumora Home">
+        <span class="brand-btn__inner" data-hover-spring="scale" data-hover-to="1.04" data-tension="320" data-friction="18">
+          <span class="brand-btn__mark" aria-hidden="true">
+            <svg width="1em" height="1em" viewBox="0 0 48 48" fill="currentColor">
+              <path d="M24 2c2.2 13.8 7.9 19.6 22 22-14.1 2.4-19.8 8.2-22 22-2.2-13.8-7.9-19.6-22-22 14.1-2.4 19.8-8.2 22-22Z"/>
+            </svg>
+          </span>
+          <span>Lumora</span>
+        </span>
+      </button>
+
+      <!-- Center: Primary Nav -->
+      <nav class="primary-nav" aria-label="Primary">
+        <ul class="primary-nav__list">
+          <li>
+            <button type="button" class="primary-nav__btn" aria-current="page" data-scroll-target="home">
+              <span class="primary-nav__label" data-hover-spring="nav" data-tension="320" data-friction="22">Home</span>
+            </button>
+          </li>
+          <li>
+            <button type="button" class="primary-nav__btn" data-scroll-target="works">
+              <span class="primary-nav__label" data-hover-spring="nav" data-tension="320" data-friction="22">Work</span>
+            </button>
+          </li>
+          <li>
+            <button type="button" class="primary-nav__btn" data-scroll-target="services">
+              <span class="primary-nav__label" data-hover-spring="nav" data-tension="320" data-friction="22">
+                Services <span class="primary-nav__caret" aria-hidden="true">▾</span>
+              </span>
+            </button>
+          </li>
+          <li>
+            <button type="button" class="primary-nav__btn" data-scroll-target="about">
+              <span class="primary-nav__label" data-hover-spring="nav" data-tension="320" data-friction="22">Studio</span>
+            </button>
+          </li>
+          <li>
+            <button type="button" class="primary-nav__btn" data-scroll-target="careers">
+              <span class="primary-nav__label" data-hover-spring="nav" data-tension="320" data-friction="22">Careers</span>
+            </button>
+          </li>
+          <li>
+            <button type="button" class="primary-nav__btn" data-open-modal>
+              <span class="primary-nav__label" data-hover-spring="nav" data-tension="320" data-friction="22">Contact</span>
+            </button>
+          </li>
+        </ul>
+      </nav>
+
+      <!-- Right: Clock Chip + Menu Button -->
+      <div class="header-actions">
+        <div class="clock-chip" aria-label="Local studio time">
+          <span class="clock-chip__label">Local time</span>
+          <span id="headerClockTime" class="clock-chip__time">9:41am</span>
+          <span class="clock-chip__dot" aria-hidden="true">•</span>
+          <span id="headerClockDate" class="clock-chip__date">12 March, 2025</span>
+        </div>
+
+        <button type="button" id="openMenuBtn" class="menu-btn" aria-label="Open menu">
+          <span class="menu-btn__inner" data-hover-spring="scale" data-hover-to="1.05" data-tension="320" data-friction="18">
+            <span class="menu-btn__icon" aria-hidden="true">
+              <svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                <path d="M4 6h16M4 12h16M4 18h16"/>
+              </svg>
+            </span>
+            <span class="menu-btn__text">Menu</span>
+          </span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ========================================================================
+       MAIN CONTENT
+       ======================================================================== -->
+  <main id="main">
+    <!-- 2) HERO (#home) -->
+    <section id="home" class="hero">
+      <!-- LiquidReveal Background -->
+      <div id="liquidContainer" class="hero__media">
+        <img
+          id="heroBaseImg"
+          class="hero__img"
+          src="https://api.getlayers.ai/storage/v1/object/public/public/assets/lumora-e8b711fc68/hero/after.jpg"
+          alt="Lumora design and engineering studio showcase"
+          fetchpriority="high"
+        />
+        <canvas id="liquidCanvas" class="hero__canvas" aria-hidden="true"></canvas>
+      </div>
+
+      <!-- Legibility Vignette -->
+      <div class="hero__vignette" aria-hidden="true"></div>
+
+      <!-- Watermark -->
+      <div id="heroWatermark" class="hero__watermark" aria-hidden="true">LUMORA</div>
+
+      <!-- Content Grid -->
+      <div class="shell hero__grid">
+        <!-- Left Column -->
+        <div class="hero__left">
+          <div class="spring-reveal" data-hero-reveal data-delay="200" data-y="10" data-tension="210" data-friction="26">
+            <span class="eyebrow eyebrow--dark">
+              <span class="eyebrow__dot"></span>
+              <span>Independent Studio</span>
+            </span>
+          </div>
+
+          <h1 class="hero__title" data-line-reveal data-hero-gated data-delay="250" data-stagger="120">
+            <span class="line-clip"><span class="line-inner">Bold ideas,</span></span>
+            <span class="line-clip"><span class="line-inner">shipped with</span></span>
+            <span class="line-clip"><span class="line-inner">quiet precision</span></span>
+          </h1>
+
+          <div class="hero__rating spring-reveal" data-hero-reveal data-delay="650" data-y="12" data-tension="210" data-friction="26">
+            <span class="hero__stars" aria-label="5 out of 5 stars">
+              <svg width="1em" height="1em" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.5l2.9 5.88 6.49.94-4.7 4.58 1.11 6.46L12 17.9l-5.8 3.05 1.1-6.46-4.69-4.58 6.49-.94L12 2.5z"/></svg>
+              <svg width="1em" height="1em" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.5l2.9 5.88 6.49.94-4.7 4.58 1.11 6.46L12 17.9l-5.8 3.05 1.1-6.46-4.69-4.58 6.49-.94L12 2.5z"/></svg>
+              <svg width="1em" height="1em" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.5l2.9 5.88 6.49.94-4.7 4.58 1.11 6.46L12 17.9l-5.8 3.05 1.1-6.46-4.69-4.58 6.49-.94L12 2.5z"/></svg>
+              <svg width="1em" height="1em" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.5l2.9 5.88 6.49.94-4.7 4.58 1.11 6.46L12 17.9l-5.8 3.05 1.1-6.46-4.69-4.58 6.49-.94L12 2.5z"/></svg>
+              <svg width="1em" height="1em" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.5l2.9 5.88 6.49.94-4.7 4.58 1.11 6.46L12 17.9l-5.8 3.05 1.1-6.46-4.69-4.58 6.49-.94L12 2.5z"/></svg>
+            </span>
+            <span class="hero__rating-text">200+ brands shipped</span>
+          </div>
+
+          <div class="hero__ctas spring-reveal" data-hero-reveal data-delay="750" data-y="12" data-tension="210" data-friction="26">
+            <button type="button" class="pill-btn pill-btn--dark pill-btn--arrow" data-open-modal data-pill-hover data-arrow-dir="right">
+              <span class="pill-btn__inner">
+                <span>Let's Talk</span>
+                <span class="pill-btn__badge" aria-hidden="true">
+                  <span class="pill-btn__icon">
+                    <svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M5 12h14M13 6l6 6-6 6"/>
+                    </svg>
+                  </span>
+                </span>
+              </span>
+            </button>
+
+            <button type="button" class="pill-btn pill-btn--outline" data-scroll-target="works" data-pill-hover>
+              <span class="pill-btn__inner">
+                <span>View Work</span>
+              </span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Right Column -->
+        <div class="hero__right">
+          <!-- Hero Carousel Card -->
+          <div class="hero-card spring-reveal" data-hero-reveal data-delay="400" data-y="16" data-scale="0.96" data-tension="200" data-friction="24">
+            <div id="heroCardTrigger" class="hero-card__row" role="button" tabindex="0" aria-label="Cycle studio highlights">
+              <div class="hero-card__tile" aria-hidden="true">
+                <svg width="1em" height="1em" viewBox="0 0 48 48" fill="currentColor">
+                  <path d="M24 2c2.2 13.8 7.9 19.6 22 22-14.1 2.4-19.8 8.2-22 22-2.2-13.8-7.9-19.6-22-22 14.1-2.4 19.8-8.2 22-22Z"/>
+                </svg>
+              </div>
+              <div class="hero-card__panel">
+                <div id="heroCardSlot" class="hero-card__slot">
+                  <div class="hero-card__slide">
+                    <span class="hero-card__caption">Conversion design</span>
+                    <p class="hero-card__heading">Crafted to convert.</p>
+                  </div>
+                </div>
+                <div class="hero-card__controls">
+                  <div id="heroCardDots" class="hero-card__dots" aria-hidden="true">
+                    <span class="hero-card__dot is-active"></span>
+                    <span class="hero-card__dot"></span>
+                    <span class="hero-card__dot"></span>
+                  </div>
+                  <div class="hero-card__arrows">
+                    <button type="button" id="heroCardPrev" class="hero-card__nav-btn hero-card__nav-btn--prev" aria-label="Previous highlight">
+                      <svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M5 12h14M13 6l6 6-6 6"/>
+                      </svg>
+                    </button>
+                    <button type="button" id="heroCardNext" class="hero-card__nav-btn" aria-label="Next highlight">
+                      <svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M5 12h14M13 6l6 6-6 6"/>
+                      </svg>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Partners Grid -->
+          <div id="partners" class="partners spring-reveal" data-hero-reveal data-delay="550" data-y="14" data-tension="200" data-friction="24">
+            <p class="partners__label">Trusted by</p>
+            <ul class="partners__grid">
+              <li class="partner-item" data-hover-spring="partner" data-tension="320" data-friction="20">
+                <span class="partner-item__icon" aria-hidden="true">
+                  <svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3.2" fill="currentColor" stroke="none"/></svg>
+                </span>
+                <span>Kaido</span>
+              </li>
+              <li class="partner-item" data-hover-spring="partner" data-tension="320" data-friction="20">
+                <span class="partner-item__icon" aria-hidden="true">
+                  <svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3.2" fill="currentColor" stroke="none"/></svg>
+                </span>
+                <span>Northpeak</span>
+              </li>
+              <li class="partner-item" data-hover-spring="partner" data-tension="320" data-friction="20">
+                <span class="partner-item__icon" aria-hidden="true">
+                  <svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3.2" fill="currentColor" stroke="none"/></svg>
+                </span>
+                <span>Vellum</span>
+              </li>
+              <li class="partner-item" data-hover-spring="partner" data-tension="320" data-friction="20">
+                <span class="partner-item__icon" aria-hidden="true">
+                  <svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3.2" fill="currentColor" stroke="none"/></svg>
+                </span>
+                <span>Orbit</span>
+              </li>
+              <li class="partner-item" data-hover-spring="partner" data-tension="320" data-friction="20">
+                <span class="partner-item__icon" aria-hidden="true">
+                  <svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3.2" fill="currentColor" stroke="none"/></svg>
+                </span>
+                <span>Brightline</span>
+              </li>
+              <li class="partner-item" data-hover-spring="partner" data-tension="320" data-friction="20">
+                <span class="partner-item__icon" aria-hidden="true">
+                  <svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3.2" fill="currentColor" stroke="none"/></svg>
+                </span>
+                <span>Cobalt</span>
+              </li>
+              <li class="partner-item" data-hover-spring="partner" data-tension="320" data-friction="20">
+                <span class="partner-item__icon" aria-hidden="true">
+                  <svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3.2" fill="currentColor" stroke="none"/></svg>
+                </span>
+                <span>Mesa</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Bottom Status Bar -->
+      <div class="hero__footer spring-reveal" data-hero-reveal data-delay="900" data-y="0" data-tension="180" data-friction="26">
+        <div class="shell hero__footer-inner">
+          <span>Working since 2014</span>
+          <span class="hero__footer-mid">Remote-first, worldwide</span>
+          <span class="hero__footer-scroll">
+            <span>Scroll to explore</span>
+            <span aria-hidden="true">↓</span>
+          </span>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3) ABOUT (#about) -->
+    <section id="about" class="about">
+      <div class="shell about__grid">
+        <!-- Left Globe Block -->
+        <div class="about__left">
+          <div class="about__bg-globe" aria-hidden="true">
+            <svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4">
+              <circle cx="12" cy="12" r="9.25"/>
+              <path d="M12 2.75c2.6 2.3 4 5.8 4 9.25s-1.4 6.95-4 9.25c-2.6-2.3-4-5.8-4-9.25s1.4-6.95 4-9.25zM2.75 12h18.5"/>
+            </svg>
+          </div>
+
+          <div class="about__eyebrow">
+            <span class="eyebrow eyebrow--dark">
+              <span class="eyebrow__dot"></span>
+              <span>The Studio</span>
+            </span>
+          </div>
+
+          <div class="about__note spring-reveal" data-scroll-reveal data-y="12" data-tension="200" data-friction="24">
+            <span class="about__note-icon" aria-hidden="true">
+              <svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4">
+                <circle cx="12" cy="12" r="9.25"/>
+                <path d="M12 2.75c2.6 2.3 4 5.8 4 9.25s-1.4 6.95-4 9.25c-2.6-2.3-4-5.8-4-9.25s1.4-6.95 4-9.25zM2.75 12h18.5"/>
+              </svg>
+            </span>
+            <span class="about__note-text">A distributed team building across every time zone.</span>
+          </div>
+        </div>
+
+        <!-- Right Statement -->
+        <div class="about__right">
+          <h2 class="about__statement" data-word-reveal data-stagger="35">
+            We partner with ambitious teams to ship <span class="about__statement-muted">digital products, brand systems, and the strategy that holds them together.</span>
+          </h2>
+
+          <div class="about__footer spring-reveal" data-scroll-reveal data-delay="200" data-y="12" data-tension="200" data-friction="24">
+            <div>
+              <p class="about__social-label">Find us online</p>
+              <div class="about__socials">
+                <a href="#about" class="social-chip social-chip--accent" aria-label="X / Twitter" data-social-hover>
+                  <span class="social-chip__icon" aria-hidden="true">
+                    <svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                      <path d="M4 4l16 16M20 4 4 20"/>
+                    </svg>
+                  </span>
+                </a>
+                <a href="#about" class="social-chip" aria-label="Behance" data-social-hover>
+                  <span class="social-chip__icon" aria-hidden="true">
+                    <svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3.2" fill="currentColor" stroke="none"/></svg>
+                  </span>
+                </a>
+                <a href="#about" class="social-chip" aria-label="Dribbble" data-social-hover>
+                  <span class="social-chip__icon" aria-hidden="true">
+                    <svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3.2" fill="currentColor" stroke="none"/></svg>
+                  </span>
+                </a>
+              </div>
+            </div>
+
+            <a href="#about" class="pill-btn pill-btn--outline pill-btn--arrow" data-scroll-target="about" data-pill-hover data-arrow-dir="right">
+              <span class="pill-btn__inner">
+                <span>About Us</span>
+                <span class="pill-btn__badge" aria-hidden="true">
+                  <span class="pill-btn__icon">
+                    <svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M5 12h14M13 6l6 6-6 6"/>
+                    </svg>
+                  </span>
+                </span>
+              </span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4) CREATE BAND ("We Build -> Better") -->
+    <section id="careers" class="create-band" aria-label="Studio mantra">
+      <ul class="shell create-band__list">
+        <li class="create-band__item spring-reveal" data-scroll-reveal data-delay="0" data-y="28" data-tension="200" data-friction="22">
+          <div class="create-tile create-tile--light" data-hover-spring="scale" data-hover-to="1.03" data-tension="300" data-friction="18">We</div>
+        </li>
+        <li class="create-band__item spring-reveal" data-scroll-reveal data-delay="120" data-y="28" data-tension="200" data-friction="22">
+          <div class="create-tile create-tile--accent" data-hover-spring="scale" data-hover-to="1.03" data-tension="300" data-friction="18">Build</div>
+        </li>
+        <li class="create-band__item spring-reveal" data-scroll-reveal data-delay="240" data-y="28" data-tension="200" data-friction="22">
+          <div class="create-tile create-tile--dark" data-hover-spring="scale" data-hover-to="1.03" data-tension="300" data-friction="18" aria-label="Forward arrow">
+            <svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M5 12h14M13 6l6 6-6 6"/>
+            </svg>
+          </div>
+        </li>
+        <li class="create-band__item spring-reveal" data-scroll-reveal data-delay="360" data-y="28" data-tension="200" data-friction="22">
+          <div class="create-tile create-tile--ghost" data-hover-spring="scale" data-hover-to="1.03" data-tension="300" data-friction="18">Better</div>
+        </li>
+      </ul>
+    </section>
+
+    <!-- 5) PORTFOLIO (#works) -->
+    <section id="works" class="portfolio">
+      <div class="shell portfolio__inner">
+        <header class="portfolio__header">
+          <div class="spring-reveal" data-scroll-reveal data-y="12" data-tension="200" data-friction="24">
+            <span class="eyebrow eyebrow--dark eyebrow--pill">
+              <span class="eyebrow__dot"></span>
+              <span>Portfolio</span>
+            </span>
+          </div>
+          <h2 class="portfolio__title" data-line-reveal data-delay="120">
+            <span class="line-clip"><span class="line-inner">Selected Work</span></span>
+          </h2>
+        </header>
+
+        <ul class="portfolio__grid">
+          <!-- Card 1 -->
+          <li class="spring-reveal" data-scroll-reveal data-delay="0" data-y="48" data-tension="180" data-friction="26">
+            <a href="#works" data-work-card>
+              <article class="work-card">
+                <div class="work-card__top">
+                  <span>Branding — 2025</span>
+                  <span class="work-card__badge" aria-hidden="true">
+                    <svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M7 17 17 7M8 7h9v9"/>
+                    </svg>
+                  </span>
+                </div>
+                <div class="work-card__mark" aria-hidden="true">
+                  <span class="work-card__mark-inner">
+                    <svg width="1em" height="1em" viewBox="0 0 48 48" fill="currentColor">
+                      <path d="M24 2c2.2 13.8 7.9 19.6 22 22-14.1 2.4-19.8 8.2-22 22-2.2-13.8-7.9-19.6-22-22 14.1-2.4 19.8-8.2 22-22Z"/>
+                    </svg>
+                    <span class="work-card__reg">®</span>
+                  </span>
+                </div>
+                <div class="work-card__bottom">
+                  <h3 class="work-card__name">Aster Labs</h3>
+                  <p class="work-card__desc">A complete identity and go-to-market system for a fast-moving research startup.</p>
+                  <div class="work-card__tags">
+                    <span class="tag-chip">Branding</span>
+                    <span class="tag-chip">Strategy</span>
+                    <span class="tag-chip">Design</span>
+                  </div>
+                </div>
+              </article>
+            </a>
+          </li>
+
+          <!-- Card 2 -->
+          <li class="spring-reveal" data-scroll-reveal data-delay="90" data-y="48" data-tension="180" data-friction="26">
+            <a href="#works" data-work-card>
+              <article class="work-card">
+                <div class="work-card__top">
+                  <span>Product — 2024</span>
+                  <span class="work-card__badge" aria-hidden="true">
+                    <svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M7 17 17 7M8 7h9v9"/>
+                    </svg>
+                  </span>
+                </div>
+                <div class="work-card__mark" aria-hidden="true">
+                  <span class="work-card__mark-inner">
+                    <svg width="1em" height="1em" viewBox="0 0 48 48" fill="currentColor">
+                      <path d="M24 2c2.2 13.8 7.9 19.6 22 22-14.1 2.4-19.8 8.2-22 22-2.2-13.8-7.9-19.6-22-22 14.1-2.4 19.8-8.2 22-22Z"/>
+                    </svg>
+                    <span class="work-card__reg">®</span>
+                  </span>
+                </div>
+                <div class="work-card__bottom">
+                  <h3 class="work-card__name">Nova Finance</h3>
+                  <p class="work-card__desc">A finance platform reimagined — clear data, calm interfaces, and effortless flows.</p>
+                  <div class="work-card__tags">
+                    <span class="tag-chip">Product Design</span>
+                    <span class="tag-chip">Web App</span>
+                    <span class="tag-chip">QA</span>
+                  </div>
+                </div>
+              </article>
+            </a>
+          </li>
+
+          <!-- Card 3 -->
+          <li class="spring-reveal" data-scroll-reveal data-delay="180" data-y="48" data-tension="180" data-friction="26">
+            <a href="#works" data-work-card>
+              <article class="work-card">
+                <div class="work-card__top">
+                  <span>Identity — 2023</span>
+                  <span class="work-card__badge" aria-hidden="true">
+                    <svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M7 17 17 7M8 7h9v9"/>
+                    </svg>
+                  </span>
+                </div>
+                <div class="work-card__mark" aria-hidden="true">
+                  <span class="work-card__mark-inner">
+                    <svg width="1em" height="1em" viewBox="0 0 48 48" fill="currentColor">
+                      <path d="M24 2c2.2 13.8 7.9 19.6 22 22-14.1 2.4-19.8 8.2-22 22-2.2-13.8-7.9-19.6-22-22 14.1-2.4 19.8-8.2 22-22Z"/>
+                    </svg>
+                    <span class="work-card__reg">®</span>
+                  </span>
+                </div>
+                <div class="work-card__bottom">
+                  <h3 class="work-card__name">Helio Studio</h3>
+                  <p class="work-card__desc">A bold visual identity and art direction system built to scale across every surface.</p>
+                  <div class="work-card__tags">
+                    <span class="tag-chip">Brand Identity</span>
+                    <span class="tag-chip">Art Direction</span>
+                  </div>
+                </div>
+              </article>
+            </a>
+          </li>
+
+          <!-- Card 4 -->
+          <li class="spring-reveal" data-scroll-reveal data-delay="270" data-y="48" data-tension="180" data-friction="26">
+            <a href="#works" data-work-card>
+              <article class="work-card">
+                <div class="work-card__top">
+                  <span>Mobile — 2023</span>
+                  <span class="work-card__badge" aria-hidden="true">
+                    <svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M7 17 17 7M8 7h9v9"/>
+                    </svg>
+                  </span>
+                </div>
+                <div class="work-card__mark" aria-hidden="true">
+                  <span class="work-card__mark-inner">
+                    <svg width="1em" height="1em" viewBox="0 0 48 48" fill="currentColor">
+                      <path d="M24 2c2.2 13.8 7.9 19.6 22 22-14.1 2.4-19.8 8.2-22 22-2.2-13.8-7.9-19.6-22-22 14.1-2.4 19.8-8.2 22-22Z"/>
+                    </svg>
+                    <span class="work-card__reg">®</span>
+                  </span>
+                </div>
+                <div class="work-card__bottom">
+                  <h3 class="work-card__name">Pulse Health</h3>
+                  <p class="work-card__desc">A wellness app grounded in research, shipped end to end from concept to release.</p>
+                  <div class="work-card__tags">
+                    <span class="tag-chip">Mobile App</span>
+                    <span class="tag-chip">UX Research</span>
+                    <span class="tag-chip">Development</span>
+                  </div>
+                </div>
+              </article>
+            </a>
+          </li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- 6) SERVICES (#services) -->
+    <section id="services" class="services">
+      <div class="shell services__inner">
+        <div class="spring-reveal" data-scroll-reveal data-y="12" data-tension="200" data-friction="24">
+          <span class="eyebrow eyebrow--dark">
+            <span class="eyebrow__dot"></span>
+            <span>Services</span>
+          </span>
+        </div>
+
+        <h2 class="services__title" data-line-reveal data-delay="120">
+          <span class="line-clip"><span class="line-inner">What we do best</span></span>
+        </h2>
+
+        <ul>
+          <li id="development" class="services__item spring-reveal" data-scroll-reveal data-delay="0" data-y="24" data-tension="200" data-friction="24">
+            <a href="#development" class="service-row" data-service-row>
+              <span class="service-row__num">01</span>
+              <h3 class="service-row__name">Software Development</h3>
+              <p class="service-row__desc">Scalable web &amp; mobile products built to last.</p>
+              <span class="service-row__badge" aria-hidden="true">
+                <svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M7 17 17 7M8 7h9v9"/>
+                </svg>
+              </span>
+            </a>
+          </li>
+
+          <li id="design" class="services__item spring-reveal" data-scroll-reveal data-delay="80" data-y="24" data-tension="200" data-friction="24">
+            <a href="#design" class="service-row" data-service-row>
+              <span class="service-row__num">02</span>
+              <h3 class="service-row__name">Product Design</h3>
+              <p class="service-row__desc">Interfaces that feel effortless and look sharp.</p>
+              <span class="service-row__badge" aria-hidden="true">
+                <svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M7 17 17 7M8 7h9v9"/>
+                </svg>
+              </span>
+            </a>
+          </li>
+
+          <li id="qa" class="services__item spring-reveal" data-scroll-reveal data-delay="160" data-y="24" data-tension="200" data-friction="24">
+            <a href="#qa" class="service-row" data-service-row>
+              <span class="service-row__num">03</span>
+              <h3 class="service-row__name">Quality Assurance</h3>
+              <p class="service-row__desc">Rigorous testing for flawless, confident releases.</p>
+              <span class="service-row__badge" aria-hidden="true">
+                <svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M7 17 17 7M8 7h9v9"/>
+                </svg>
+              </span>
+            </a>
+          </li>
+
+          <li id="consulting" class="services__item spring-reveal" data-scroll-reveal data-delay="240" data-y="24" data-tension="200" data-friction="24">
+            <a href="#consulting" class="service-row" data-service-row>
+              <span class="service-row__num">04</span>
+              <h3 class="service-row__name">Consulting</h3>
+              <p class="service-row__desc">Strategy and direction for ambitious teams.</p>
+              <span class="service-row__badge" aria-hidden="true">
+                <svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M7 17 17 7M8 7h9v9"/>
+                </svg>
+              </span>
+            </a>
+          </li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- 7) STATS PANEL -->
+    <section class="stats" aria-label="Studio statistics">
+      <div class="shell stats__outer">
+        <div class="stats__panel spring-reveal" data-scroll-reveal data-y="40" data-scale="0.99" data-tension="180" data-friction="26">
+          <span class="eyebrow eyebrow--light">
+            <span class="eyebrow__dot"></span>
+            <span>By the numbers</span>
+          </span>
+
+          <h2 class="stats__title" data-line-reveal data-delay="120">
+            <span class="line-clip"><span class="line-inner">Proof in the work, not the words.</span></span>
+          </h2>
+
+          <ul class="stats__grid">
+            <li class="spring-reveal" data-scroll-reveal data-delay="0" data-y="20" data-tension="200" data-friction="24">
+              <div class="stat-item__value" data-count-target="150" data-count-suffix="+">0+</div>
+              <p class="stat-item__label">Projects delivered</p>
+            </li>
+            <li class="spring-reveal" data-scroll-reveal data-delay="90" data-y="20" data-tension="200" data-friction="24">
+              <div class="stat-item__value" data-count-target="98" data-count-suffix="%">0%</div>
+              <p class="stat-item__label">Client retention</p>
+            </li>
+            <li class="spring-reveal" data-scroll-reveal data-delay="180" data-y="20" data-tension="200" data-friction="24">
+              <div class="stat-item__value" data-count-target="12" data-count-suffix="">0</div>
+              <p class="stat-item__label">Years of craft</p>
+            </li>
+            <li class="spring-reveal" data-scroll-reveal data-delay="270" data-y="20" data-tension="200" data-friction="24">
+              <div class="stat-item__value" data-count-target="40" data-count-suffix="+">0+</div>
+              <p class="stat-item__label">Team members</p>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ========================================================================
+       8) FOOTER
+       ======================================================================== -->
+  <footer class="site-footer">
+    <div class="shell site-footer__inner">
+      <!-- CTA Row -->
+      <div class="footer-cta">
+        <h2 class="footer-cta__title" data-line-reveal data-stagger="100">
+          <span class="line-clip"><span class="line-inner">Have a project in mind?</span></span>
+          <span class="line-clip"><span class="line-inner">Let's get to work.</span></span>
+        </h2>
+
+        <div>
+          <button type="button" class="pill-btn pill-btn--light pill-btn--arrow" data-open-modal data-pill-hover data-arrow-dir="up-right">
+            <span class="pill-btn__inner">
+              <span>Start a project</span>
+              <span class="pill-btn__badge" aria-hidden="true">
+                <span class="pill-btn__icon">
+                  <svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M7 17 17 7M8 7h9v9"/>
+                  </svg>
+                </span>
+              </span>
+            </span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Columns -->
+      <div class="footer-cols">
+        <div>
+          <div class="footer-brand__logo">
+            <span class="footer-brand__mark" aria-hidden="true">
+              <svg width="1em" height="1em" viewBox="0 0 48 48" fill="currentColor">
+                <path d="M24 2c2.2 13.8 7.9 19.6 22 22-14.1 2.4-19.8 8.2-22 22-2.2-13.8-7.9-19.6-22-22 14.1-2.4 19.8-8.2 22-22Z"/>
+              </svg>
+            </span>
+            <span>Lumora</span>
+          </div>
+          <p class="footer-brand__tagline">
+            An independent studio crafting brands, products, and the systems that connect them.
+          </p>
+        </div>
+
+        <div>
+          <h3 class="footer-col__title">Company</h3>
+          <ul class="footer-col__list">
+            <li><a href="#about" class="anim-link" data-scroll-target="about"><span class="anim-link__inner" data-hover-spring="link">About</span></a></li>
+            <li><a href="#careers" class="anim-link" data-scroll-target="careers"><span class="anim-link__inner" data-hover-spring="link">Careers</span></a></li>
+            <li><a href="#partners" class="anim-link" data-scroll-target="partners"><span class="anim-link__inner" data-hover-spring="link">Partners</span></a></li>
+            <li><a href="#contact" class="anim-link" data-open-modal><span class="anim-link__inner" data-hover-spring="link">Contact</span></a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h3 class="footer-col__title">Services</h3>
+          <ul class="footer-col__list">
+            <li><a href="#development" class="anim-link" data-scroll-target="development"><span class="anim-link__inner" data-hover-spring="link">Development</span></a></li>
+            <li><a href="#design" class="anim-link" data-scroll-target="design"><span class="anim-link__inner" data-hover-spring="link">Design</span></a></li>
+            <li><a href="#qa" class="anim-link" data-scroll-target="qa"><span class="anim-link__inner" data-hover-spring="link">Quality Assurance</span></a></li>
+            <li><a href="#consulting" class="anim-link" data-scroll-target="consulting"><span class="anim-link__inner" data-hover-spring="link">Consulting</span></a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h3 class="footer-col__title">Social</h3>
+          <ul class="footer-col__list">
+            <li><a href="#about" class="anim-link"><span class="anim-link__inner" data-hover-spring="link">X / Twitter</span></a></li>
+            <li><a href="#about" class="anim-link"><span class="anim-link__inner" data-hover-spring="link">Behance</span></a></li>
+            <li><a href="#about" class="anim-link"><span class="anim-link__inner" data-hover-spring="link">Dribbble</span></a></li>
+            <li><a href="#about" class="anim-link"><span class="anim-link__inner" data-hover-spring="link">LinkedIn</span></a></li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Legal Bar -->
+      <div class="footer-legal">
+        <span>© 2025 Lumora Studio. All rights reserved.</span>
+        <div class="footer-legal__links">
+          <a href="#privacy" id="privacy" class="anim-link anim-link--legal"><span class="anim-link__inner" data-hover-spring="legal-link">Privacy</span></a>
+          <a href="#terms" id="terms" class="anim-link anim-link--legal"><span class="anim-link__inner" data-hover-spring="legal-link">Terms</span></a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Watermark -->
+    <div class="site-footer__watermark" aria-hidden="true">LUMORA</div>
+  </footer>
+
+  <!-- ========================================================================
+       9) NAV MENU OVERLAY
+       ======================================================================== -->
+  <div id="navOverlay" class="nav-overlay" role="dialog" aria-modal="true" aria-label="Navigation menu">
+    <div class="shell nav-overlay__top">
+      <div class="nav-overlay__brand">
+        <span class="nav-overlay__mark" aria-hidden="true">
+          <svg width="1em" height="1em" viewBox="0 0 48 48" fill="currentColor">
+            <path d="M24 2c2.2 13.8 7.9 19.6 22 22-14.1 2.4-19.8 8.2-22 22-2.2-13.8-7.9-19.6-22-22 14.1-2.4 19.8-8.2 22-22Z"/>
+          </svg>
+        </span>
+        <span>Lumora</span>
+      </div>
+
+      <button type="button" id="closeMenuBtn" class="nav-overlay__close">
+        <svg width="0.875em" height="0.875em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+          <path d="M4 4l16 16M20 4 4 20"/>
+        </svg>
+        <span>Close</span>
+      </button>
+    </div>
+
+    <nav class="shell nav-overlay__main" aria-label="Full screen">
+      <ul class="nav-overlay__list">
+        <li>
+          <button type="button" class="nav-overlay__item-btn" style="transition-delay:80ms" data-menu-target="home">
+            <span class="nav-overlay__num">01</span>
+            <span class="nav-overlay__label">Home</span>
+          </button>
+        </li>
+        <li>
+          <button type="button" class="nav-overlay__item-btn" style="transition-delay:125ms" data-menu-target="works">
+            <span class="nav-overlay__num">02</span>
+            <span class="nav-overlay__label">Work</span>
+          </button>
+        </li>
+        <li>
+          <button type="button" class="nav-overlay__item-btn" style="transition-delay:170ms" data-menu-target="services">
+            <span class="nav-overlay__num">03</span>
+            <span class="nav-overlay__label">Services</span>
+          </button>
+        </li>
+        <li>
+          <button type="button" class="nav-overlay__item-btn" style="transition-delay:215ms" data-menu-target="about">
+            <span class="nav-overlay__num">04</span>
+            <span class="nav-overlay__label">Studio</span>
+          </button>
+        </li>
+        <li>
+          <button type="button" class="nav-overlay__item-btn" style="transition-delay:260ms" data-menu-target="careers">
+            <span class="nav-overlay__num">05</span>
+            <span class="nav-overlay__label">Careers</span>
+          </button>
+        </li>
+        <li>
+          <button type="button" class="nav-overlay__item-btn" style="transition-delay:305ms" data-menu-modal>
+            <span class="nav-overlay__num">06</span>
+            <span class="nav-overlay__label">Contact</span>
+          </button>
+        </li>
+      </ul>
+    </nav>
+
+    <div class="shell nav-overlay__bottom">
+      <span id="menuClock">Local time — 9:41am</span>
+      <button type="button" id="menuStartProjectBtn" class="nav-overlay__cta">Start a project →</button>
+    </div>
+  </div>
+
+  <!-- ========================================================================
+       10) REQUEST MODAL OVERLAY
+       ======================================================================== -->
+  <div id="requestModal" class="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <div id="modalPanel" class="modal-panel">
+      <button type="button" id="closeModalBtn" class="modal-close" aria-label="Close modal">
+        <svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+          <path d="M4 4l16 16M20 4 4 20"/>
+        </svg>
+      </button>
+
+      <!-- Form View -->
+      <div id="modalFormWrap" class="modal-form-wrap">
+        <div class="modal-header">
+          <span class="modal-eyebrow">
+            <span class="modal-eyebrow__dot"></span>
+            <span>Start a project</span>
+          </span>
+          <h2 id="modalTitle" class="modal-title">Tell us what you're building.</h2>
+        </div>
+
+        <form id="requestForm" class="modal-form">
+          <label class="field">
+            <span class="field__label">Name</span>
+            <input type="text" name="name" class="field__control" required placeholder="Your name" />
+          </label>
+
+          <label class="field">
+            <span class="field__label">Email</span>
+            <input type="email" name="email" class="field__control" required placeholder="you@company.com" />
+          </label>
+
+          <label class="field">
+            <span class="field__label">Project</span>
+            <textarea name="project" rows="4" class="field__control" required placeholder="A few words about your project, timeline, and budget."></textarea>
+          </label>
+
+          <div class="modal-footer">
+            <span class="modal-note">We reply within one business day.</span>
+            <button type="submit" id="modalSubmitBtn" class="pill-btn pill-btn--dark pill-btn--arrow" data-pill-hover data-arrow-dir="up-right">
+              <span class="pill-btn__inner">
+                <span id="modalSubmitLabel">Send request</span>
+                <span class="pill-btn__badge" aria-hidden="true">
+                  <span class="pill-btn__icon">
+                    <svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M7 17 17 7M8 7h9v9"/>
+                    </svg>
+                  </span>
+                </span>
+              </span>
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <!-- Success View -->
+      <div id="modalSuccessView" class="modal-success" role="status" aria-live="polite">
+        <div class="modal-success__badge" aria-hidden="true">
+          <svg width="1em" height="1em" viewBox="0 0 48 48" fill="currentColor">
+            <path d="M24 2c2.2 13.8 7.9 19.6 22 22-14.1 2.4-19.8 8.2-22 22-2.2-13.8-7.9-19.6-22-22 14.1-2.4 19.8-8.2 22-22Z"/>
+          </svg>
+        </div>
+        <h2 class="modal-success__title">Request received</h2>
+        <p class="modal-success__desc">Thanks for reaching out — we'll get back to you within one business day.</p>
+        <button type="button" id="modalDoneBtn" class="pill-btn pill-btn--dark" data-pill-hover>
+          <span class="pill-btn__inner">
+            <span>Close</span>
+          </span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================================================
+       IMPORTMAP & APPLICATION MODULE
+       ======================================================================== -->
+  <script type="importmap">
+    {
+      "imports": {
+        "lenis": "https://unpkg.com/lenis@1.3.23/dist/lenis.mjs"
+      }
+    }
+  </script>
+
+  <script type="module">
+    import Lenis from 'lenis';
+
+    /* ========================================================================
+       1. ADAPTIVE REM GRID (>1920px Scale-Up)
+       ======================================================================== */
+    function applyAdaptiveGrid() {
+      const FONT_BASE = 16, baseWidth = 1920, coef = 0.6666;
+      const w = window.innerWidth;
+      const widthReduction = ((baseWidth - w) / baseWidth) * 100;
+      const size = FONT_BASE - (FONT_BASE * (widthReduction * coef)) / 100;
+      if (size > FONT_BASE) {
+        document.documentElement.style.fontSize = size + 'px';
+      } else {
+        document.documentElement.style.removeProperty('font-size');
+      }
+    }
+    applyAdaptiveGrid();
+    window.addEventListener('resize', applyAdaptiveGrid);
+
+    /* ========================================================================
+       2. LENIS SMOOTH SCROLL & SCROLL LOCK MODEL
+       ======================================================================== */
+    if ('scrollRestoration' in history) {
+      history.scrollRestoration = 'manual';
+    }
+    window.scrollTo(0, 0);
+
+    const lenis = new Lenis({ smoothWheel: true });
+    let scrollEnabled = true;
+
+    function raf(t) {
+      lenis.raf(t);
+      requestAnimationFrame(raf);
+    }
+    requestAnimationFrame(raf);
+
+    function stopScroll() {
+      scrollEnabled = false;
+      lenis.stop();
+      const html = document.documentElement;
+      html.style.position = 'relative';
+      html.style.overflow = 'hidden';
+      html.style.height = '100%';
+    }
+
+    function startScroll() {
+      scrollEnabled = true;
+      const html = document.documentElement;
+      html.style.removeProperty('position');
+      html.style.removeProperty('overflow');
+      html.style.removeProperty('height');
+      lenis.start();
+    }
+
+    function scrollToSection(id) {
+      const el = document.getElementById(id);
+      if (!el) return;
+      scrollEnabled = false;
+      setTimeout(() => {
+        const top = el.getBoundingClientRect().top + window.pageYOffset;
+        window.scrollTo({ top, behavior: 'smooth' });
+        setTimeout(() => {
+          scrollEnabled = true;
+        }, 100);
+      }, 50);
+    }
+
+    /* ========================================================================
+       3. SPRING PHYSICS HELPER (react-spring feel)
+       ======================================================================== */
+    const activeSprings = new Set();
+    let springLoopRunning = false;
+
+    function runSpringLoop() {
+      if (activeSprings.size === 0) {
+        springLoopRunning = false;
+        return;
+      }
+      springLoopRunning = true;
+      const dt = 1 / 60;
+      for (const s of activeSprings) {
+        let settled = true;
+        for (let i = 0; i < s.values.length; i++) {
+          const x = s.values[i];
+          const v = s.velocities[i];
+          const target = s.targets[i];
+          const accel = s.tension * (target - x) - s.friction * v;
+          const nextV = v + accel * dt;
+          const nextX = x + nextV * dt;
+          s.values[i] = nextX;
+          s.velocities[i] = nextV;
+          if (Math.abs(target - nextX) >= 0.001 || Math.abs(nextV) >= 0.001) {
+            settled = false;
+          } else {
+            s.values[i] = target;
+            s.velocities[i] = 0;
+          }
+        }
+        s.onUpdate(s.values);
+        if (settled) {
+          activeSprings.delete(s);
+          if (s.onRest) s.onRest();
+        }
+      }
+      requestAnimationFrame(runSpringLoop);
+    }
+
+    function createSpring({ from, tension = 210, friction = 26, onUpdate }) {
+      const state = {
+        values: [...from],
+        velocities: from.map(() => 0),
+        targets: [...from],
+        tension,
+        friction,
+        onUpdate,
+        onRest: null,
+        to(nextTargets, onRest = null) {
+          state.targets = [...nextTargets];
+          state.onRest = onRest;
+          activeSprings.add(state);
+          if (!springLoopRunning) requestAnimationFrame(runSpringLoop);
+        },
+        set(nextValues) {
+          activeSprings.delete(state);
+          state.values = [...nextValues];
+          state.targets = [...nextValues];
+          state.velocities = nextValues.map(() => 0);
+          state.onUpdate(state.values);
+        }
+      };
+      return state;
+    }
+
+    const canHover = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    /* ========================================================================
+       4. LIVE LOCAL CLOCK
+       ======================================================================== */
+    const MONTHS = [
+      'January', 'February', 'March', 'April', 'May', 'June',
+      'July', 'August', 'September', 'October', 'November', 'December'
+    ];
+    const headerClockTime = document.getElementById('headerClockTime');
+    const headerClockDate = document.getElementById('headerClockDate');
+    const menuClock = document.getElementById('menuClock');
+
+    function updateClock() {
+      const now = new Date();
+      const rawHours = now.getHours();
+      const hours = rawHours % 12 || 12;
+      const minutes = String(now.getMinutes()).padStart(2, '0');
+      const meridiem = rawHours >= 12 ? 'pm' : 'am';
+      const timeStr = `${hours}:${minutes}${meridiem}`;
+      const dateStr = `${now.getDate()} ${MONTHS[now.getMonth()]}, ${now.getFullYear()}`;
+
+      if (headerClockTime) headerClockTime.textContent = timeStr;
+      if (headerClockDate) headerClockDate.textContent = dateStr;
+      if (menuClock) menuClock.textContent = `Local time — ${timeStr}`;
+    }
+    updateClock();
+    setInterval(updateClock, 1000);
+
+    /* ========================================================================
+       5. LIQUID CURSOR REVEAL (Hero Background Canvas)
+       ======================================================================== */
+    function initLiquidReveal() {
+      if (prefersReducedMotion) return;
+
+      const container = document.getElementById('liquidContainer');
+      const canvas = document.getElementById('liquidCanvas');
+      if (!container || !canvas) return;
+      const ctx = canvas.getContext('2d');
+      if (!ctx) return;
+
+      const AFTER_SRC = 'https://api.getlayers.ai/storage/v1/object/public/public/assets/lumora-e8b711fc68/hero/before.jpg';
+      const brushRadius = 143;
+      const decay = 0.016;
+      const fadeFrames = 120;
+
+      const coverCanvas = document.createElement('canvas');
+      const coverCtx = coverCanvas.getContext('2d');
+      const brushCanvas = document.createElement('canvas');
+      const brushCtx = brushCanvas.getContext('2d');
+
+      const afterImg = new Image();
+      afterImg.crossOrigin = 'anonymous';
+      let imgLoaded = false;
+
+      let width = 0;
+      let height = 0;
+      let dpr = 1;
+      let radius = brushRadius;
+      let diameter = Math.ceil(radius * 2);
+
+      const points = [];
+      let lastPoint = null;
+      let idle = 0;
+      let rafActive = false;
+
+      function drawCoverImage() {
+        if (!imgLoaded || !width || !height) return;
+        coverCanvas.width = width;
+        coverCanvas.height = height;
+        coverCtx.clearRect(0, 0, width, height);
+
+        const iw = afterImg.naturalWidth || width;
+        const ih = afterImg.naturalHeight || height;
+        const scale = Math.max(width / iw, height / ih);
+        const dw = iw * scale;
+        const dh = ih * scale;
+        const dx = (width - dw) * 0.5;
+        const dy = (height - dh) * 0.5;
+        coverCtx.drawImage(afterImg, dx, dy, dw, dh);
+      }
+
+      function resize() {
+        const rect = container.getBoundingClientRect();
+        dpr = Math.min(window.devicePixelRatio || 1, 2);
+        width = Math.max(1, Math.round(rect.width * dpr));
+        height = Math.max(1, Math.round(rect.height * dpr));
+        canvas.width = width;
+        canvas.height = height;
+
+        radius = brushRadius * dpr;
+        diameter = Math.ceil(radius * 2);
+        brushCanvas.width = diameter;
+        brushCanvas.height = diameter;
+
+        drawCoverImage();
+      }
+
+      afterImg.onload = () => {
+        imgLoaded = true;
+        drawCoverImage();
+      };
+      afterImg.src = AFTER_SRC;
+
+      const ro = new ResizeObserver(resize);
+      ro.observe(container);
+      resize();
+
+      function stamp(x, y) {
+        if (!imgLoaded) return;
+        const c = radius;
+        brushCtx.clearRect(0, 0, diameter, diameter);
+        brushCtx.globalCompositeOperation = 'source-over';
+
+        const grad = brushCtx.createRadialGradient(c, c, 0, c, c, c);
+        grad.addColorStop(0, 'rgba(255,255,255,1)');
+        grad.addColorStop(0.55, 'rgba(255,255,255,0.82)');
+        grad.addColorStop(1, 'rgba(255,255,255,0)');
+
+        brushCtx.fillStyle = grad;
+        brushCtx.fillRect(0, 0, diameter, diameter);
+
+        brushCtx.globalCompositeOperation = 'source-in';
+        brushCtx.drawImage(
+          coverCanvas,
+          x - c, y - c, diameter, diameter,
+          0, 0, diameter, diameter
+        );
+
+        ctx.globalCompositeOperation = 'source-over';
+        ctx.drawImage(brushCanvas, x - c, y - c);
+      }
+
+      function tick() {
+        const drawing = points.length > 0;
+        if (drawing) {
+          idle = 0;
+        } else {
+          idle++;
+          if (idle > fadeFrames) {
+            ctx.clearRect(0, 0, width, height);
+            rafActive = false;
+            return;
+          }
+        }
+
+        const fade = drawing ? decay : Math.min(decay + idle * 0.004, 0.5);
+        ctx.globalCompositeOperation = 'destination-out';
+        ctx.fillStyle = `rgba(0,0,0,${fade})`;
+        ctx.fillRect(0, 0, width, height);
+
+        if (drawing) {
+          for (let i = 0; i < points.length; i++) {
+            stamp(points[i].x, points[i].y);
+          }
+          points.length = 0;
+        } else if (idle === fadeFrames) {
+          ctx.clearRect(0, 0, width, height);
+          rafActive = false;
+          return;
+        }
+
+        requestAnimationFrame(tick);
+      }
+
+      window.addEventListener('pointermove', (e) => {
+        if (!imgLoaded || !width || !height) return;
+        const rect = container.getBoundingClientRect();
+        const x = (e.clientX - rect.left) * dpr;
+        const y = (e.clientY - rect.top) * dpr;
+
+        if (x < -radius || x > width + radius || y < -radius || y > height + radius) {
+          lastPoint = null;
+          return;
+        }
+
+        if (!lastPoint) {
+          points.push({ x, y });
+        } else {
+          const dx = x - lastPoint.x;
+          const dy = y - lastPoint.y;
+          const dist = Math.hypot(dx, dy);
+          const step = Math.max(radius * 0.3, 1);
+          const n = Math.min(Math.ceil(dist / step), 60);
+          for (let i = 1; i <= n; i++) {
+            const t = i / n;
+            points.push({
+              x: lastPoint.x + dx * t,
+              y: lastPoint.y + dy * t
+            });
+          }
+        }
+        lastPoint = { x, y };
+
+        if (!rafActive) {
+          rafActive = true;
+          requestAnimationFrame(tick);
+        }
+      }, { passive: true });
+    }
+    initLiquidReveal();
+
+    /* ========================================================================
+       6. HERO CAROUSEL CARD
+       ======================================================================== */
+    function initHeroCarousel() {
+      const items = [
+        { caption: 'Conversion design', title: 'Crafted to convert.' },
+        { caption: 'Engineering', title: 'Built to scale.' },
+        { caption: 'Brand systems', title: 'Designed to last.' }
+      ];
+      let index = 0;
+      const slot = document.getElementById('heroCardSlot');
+      const dots = Array.from(document.querySelectorAll('#heroCardDots .hero-card__dot'));
+      const trigger = document.getElementById('heroCardTrigger');
+      const prevBtn = document.getElementById('heroCardPrev');
+      const nextBtn = document.getElementById('heroCardNext');
+
+      function updateDots(activeIdx) {
+        dots.forEach((d, i) => d.classList.toggle('is-active', i === activeIdx));
+      }
+
+      function step(dir) {
+        const prevIndex = index;
+        index = (index + dir + items.length) % items.length;
+        if (prevIndex === index) return;
+        updateDots(index);
+
+        const outgoing = slot.querySelector('.hero-card__slide');
+        const incoming = document.createElement('div');
+        incoming.className = 'hero-card__slide';
+        incoming.innerHTML = `
+          <span class="hero-card__caption">${items[index].caption}</span>
+          <p class="hero-card__heading">${items[index].title}</p>
+        `;
+        slot.appendChild(incoming);
+
+        const outTargetY = dir > 0 ? -14 : 14;
+        const inStartY = dir > 0 ? 14 : -14;
+
+        if (outgoing) {
+          const outSpring = createSpring({
+            from: [0, 1],
+            tension: 300,
+            friction: 28,
+            onUpdate: ([y, op]) => {
+              outgoing.style.transform = `translateY(${y}px)`;
+              outgoing.style.opacity = op;
+            }
+          });
+          outSpring.to([outTargetY, 0], () => outgoing.remove());
+        }
+
+        incoming.style.transform = `translateY(${inStartY}px)`;
+        incoming.style.opacity = '0';
+        const inSpring = createSpring({
+          from: [inStartY, 0],
+          tension: 300,
+          friction: 28,
+          onUpdate: ([y, op]) => {
+            incoming.style.transform = `translateY(${y}px)`;
+            incoming.style.opacity = op;
+          }
+        });
+        inSpring.to([0, 1]);
+      }
+
+      prevBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        step(-1);
+      });
+      nextBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        step(1);
+      });
+      trigger.addEventListener('click', () => step(1));
+      trigger.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          step(1);
+        }
+      });
+    }
+    initHeroCarousel();
+
+    /* ========================================================================
+       7. WORD SPLITTING & REVEAL SYSTEM (Gated on Loader Ready)
+       ======================================================================== */
+    let introReady = false;
+
+    // Prepare word-reveal elements
+    document.querySelectorAll('[data-word-reveal]').forEach((el) => {
+      const stagger = Number(el.dataset.stagger || 35);
+      let wordIdx = 0;
+
+      function wrapWordsInNode(node) {
+        if (node.nodeType === Node.TEXT_NODE) {
+          const parts = node.textContent.split(/(\s+)/);
+          const frag = document.createDocumentFragment();
+          for (const part of parts) {
+            if (!part) continue;
+            if (/^\s+$/.test(part)) {
+              frag.appendChild(document.createTextNode(part));
+            } else {
+              const span = document.createElement('span');
+              span.className = 'word-inner';
+              span.textContent = part;
+              span.style.transitionDelay = `${wordIdx * stagger}ms`;
+              wordIdx++;
+              frag.appendChild(span);
+            }
+          }
+          node.parentNode.replaceChild(frag, node);
+        } else if (node.nodeType === Node.ELEMENT_NODE) {
+          Array.from(node.childNodes).forEach(wrapWordsInNode);
+        }
+      }
+      Array.from(el.childNodes).forEach(wrapWordsInNode);
+    });
+
+    // Apply transition delays to line-reveal children
+    document.querySelectorAll('[data-line-reveal]').forEach((el) => {
+      const baseDelay = Number(el.dataset.delay || 0);
+      const stagger = Number(el.dataset.stagger || 0);
+      el.querySelectorAll('.line-inner').forEach((line, i) => {
+        line.style.transitionDelay = `${baseDelay + i * stagger}ms`;
+      });
+    });
+
+    function triggerSpringReveal(el) {
+      if (el.dataset.revealed === 'true') return;
+      el.dataset.revealed = 'true';
+
+      const delay = Number(el.dataset.delay || 0);
+      const startY = Number(el.dataset.y ?? 20);
+      const startScale = Number(el.dataset.scale ?? 1);
+      const tension = Number(el.dataset.tension || 200);
+      const friction = Number(el.dataset.friction || 24);
+
+      el.style.transform = `translateY(${startY}px) scale(${startScale})`;
+      el.style.opacity = '0';
+
+      setTimeout(() => {
+        const sp = createSpring({
+          from: [0, startY, startScale],
+          tension,
+          friction,
+          onUpdate: ([op, y, sc]) => {
+            el.style.opacity = op;
+            el.style.transform = sc === 1
+              ? `translateY(${y}px)`
+              : `translateY(${y}px) scale(${sc})`;
+          }
+        });
+        sp.to([1, 0, 1]);
+      }, delay);
+    }
+
+    function playHeroEntrance() {
+      introReady = true;
+
+      // Header entrance (delay 150ms, {210, 26})
+      const header = document.getElementById('siteHeader');
+      if (header) {
+        setTimeout(() => {
+          const sp = createSpring({
+            from: [0, -14],
+            tension: 210,
+            friction: 26,
+            onUpdate: ([op, y]) => {
+              header.style.opacity = op;
+              header.style.transform = `translateY(${y}px)`;
+            }
+          });
+          sp.to([1, 0]);
+        }, 150);
+      }
+
+      // Hero Watermark (delay 300ms, {120, 30}, opacity 0 -> 0.4)
+      const watermark = document.getElementById('heroWatermark');
+      if (watermark) {
+        setTimeout(() => {
+          const sp = createSpring({
+            from: [0, 20],
+            tension: 120,
+            friction: 30,
+            onUpdate: ([op, y]) => {
+              watermark.style.opacity = op;
+              watermark.style.transform = `translateY(${y}px)`;
+            }
+          });
+          sp.to([0.4, 0]);
+        }, 300);
+      }
+
+      // Hero Spring Reveals
+      document.querySelectorAll('[data-hero-reveal]').forEach((el) => {
+        triggerSpringReveal(el);
+      });
+
+      // Hero Line Reveals
+      document.querySelectorAll('[data-line-reveal][data-hero-gated]').forEach((el) => {
+        requestAnimationFrame(() => el.classList.add('is-revealed'));
+      });
+    }
+
+    // IntersectionObserver for below-the-fold reveals
+    const revealObserver = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (!entry.isIntersecting) return;
+        const target = entry.target;
+        if (target.hasAttribute('data-scroll-reveal')) {
+          triggerSpringReveal(target);
+        }
+        if (target.hasAttribute('data-line-reveal') || target.hasAttribute('data-word-reveal')) {
+          target.classList.add('is-revealed');
+        }
+        revealObserver.unobserve(target);
+      });
+    }, { threshold: 0.12 });
+
+    document.querySelectorAll('[data-scroll-reveal], [data-line-reveal]:not([data-hero-gated]), [data-word-reveal]').forEach((el) => {
+      revealObserver.observe(el);
+    });
+
+    /* ========================================================================
+       8. PAGE LOADER (000 -> 100 easeInOutCubic, Spring Exit)
+       ======================================================================== */
+    function initPageLoader() {
+      const loader = document.getElementById('pageLoader');
+      const content = document.getElementById('loaderContent');
+      const fill = document.getElementById('loaderFill');
+      const num = document.getElementById('loaderNum');
+
+      if (!loader) {
+        playHeroEntrance();
+        return;
+      }
+
+      stopScroll();
+
+      const FILL_MS = 1300;
+      const startTime = performance.now();
+
+      function easeInOutCubic(t) {
+        return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+      }
+
+      function tickLoader(now) {
+        const elapsed = now - startTime;
+        const rawT = Math.min(elapsed / FILL_MS, 1);
+        const eased = easeInOutCubic(rawT);
+        const progress = Math.round(eased * 100);
+
+        fill.style.width = `${progress}%`;
+        num.textContent = String(progress).padStart(3, '0');
+
+        if (rawT < 1) {
+          requestAnimationFrame(tickLoader);
+        } else {
+          // Slide up panel {220, 30} + fade content {260, 26}
+          const contentSpring = createSpring({
+            from: [1, 0],
+            tension: 260,
+            friction: 26,
+            onUpdate: ([op, y]) => {
+              content.style.opacity = op;
+              content.style.transform = `translateY(${y}px)`;
+            }
+          });
+          contentSpring.to([0, -12]);
+
+          const panelSpring = createSpring({
+            from: [0],
+            tension: 220,
+            friction: 30,
+            onUpdate: ([yPct]) => {
+              loader.style.transform = `translateY(${yPct}%)`;
+            }
+          });
+          panelSpring.to([-100], () => {
+            loader.remove();
+            startScroll();
+            playHeroEntrance();
+          });
+        }
+      }
+
+      requestAnimationFrame(tickLoader);
+    }
+    initPageLoader();
+
+    /* ========================================================================
+       9. DESKTOP HOVER SPRINGS
+       ======================================================================== */
+    function initHoverSprings() {
+      if (!canHover) return;
+
+      // Generic [data-hover-spring]
+      document.querySelectorAll('[data-hover-spring]').forEach((el) => {
+        const mode = el.dataset.hoverSpring;
+        const tension = Number(el.dataset.tension || 320);
+        const friction = Number(el.dataset.friction || 18);
+        const trigger = el.closest('button, a, li') || el;
+
+        if (mode === 'scale') {
+          const toScale = Number(el.dataset.hoverTo || 1.04);
+          const sp = createSpring({
+            from: [1],
+            tension,
+            friction,
+            onUpdate: ([s]) => { el.style.transform = `scale(${s})`; }
+          });
+          trigger.addEventListener('mouseenter', () => sp.to([toScale]));
+          trigger.addEventListener('mouseleave', () => sp.to([1]));
+        } else if (mode === 'nav') {
+          const isCurrent = trigger.getAttribute('aria-current') === 'page';
+          const baseOp = isCurrent ? 1 : 0.8;
+          const sp = createSpring({
+            from: [0, baseOp],
+            tension,
+            friction,
+            onUpdate: ([y, op]) => {
+              el.style.transform = `translateY(${y}px)`;
+              el.style.opacity = op;
+            }
+          });
+          trigger.addEventListener('mouseenter', () => sp.to([-2, 1]));
+          trigger.addEventListener('mouseleave', () => sp.to([0, baseOp]));
+        } else if (mode === 'partner') {
+          const sp = createSpring({
+            from: [0, 0.7],
+            tension,
+            friction,
+            onUpdate: ([y, op]) => {
+              el.style.transform = `translateY(${y}px)`;
+              el.style.opacity = op;
+            }
+          });
+          trigger.addEventListener('mouseenter', () => sp.to([-2, 1]));
+          trigger.addEventListener('mouseleave', () => sp.to([0, 0.7]));
+        } else if (mode === 'link' || mode === 'legal-link') {
+          const toX = mode === 'legal-link' ? 3 : 4;
+          const baseOp = mode === 'legal-link' ? 0.7 : 0.65;
+          const sp = createSpring({
+            from: [0, baseOp],
+            tension: 320,
+            friction: 22,
+            onUpdate: ([x, op]) => {
+              el.style.transform = `translateX(${x}px)`;
+              el.style.opacity = op;
+            }
+          });
+          trigger.addEventListener('mouseenter', () => sp.to([toX, 1]));
+          trigger.addEventListener('mouseleave', () => sp.to([0, baseOp]));
+        }
+      });
+
+      // PillButton hover (scale + arrow nudge)
+      document.querySelectorAll('[data-pill-hover]').forEach((btn) => {
+        const icon = btn.querySelector('.pill-btn__icon');
+        const dir = btn.dataset.arrowDir;
+        const scaleSp = createSpring({
+          from: [1],
+          tension: 320,
+          friction: 18,
+          onUpdate: ([s]) => { btn.style.transform = `scale(${s})`; }
+        });
+        let iconSp = null;
+        if (icon && dir) {
+          iconSp = createSpring({
+            from: [0, 0],
+            tension: 320,
+            friction: 18,
+            onUpdate: ([x, y]) => { icon.style.transform = `translate(${x}px, ${y}px)`; }
+          });
+        }
+        btn.addEventListener('mouseenter', () => {
+          scaleSp.to([1.04]);
+          if (iconSp) iconSp.to(dir === 'up-right' ? [2, -2] : [3, 0]);
+        });
+        btn.addEventListener('mouseleave', () => {
+          scaleSp.to([1]);
+          if (iconSp) iconSp.to([0, 0]);
+        });
+      });
+
+      // Social chip hover
+      document.querySelectorAll('[data-social-hover]').forEach((chip) => {
+        const icon = chip.querySelector('.social-chip__icon');
+        if (!icon) return;
+        const sp = createSpring({
+          from: [1],
+          tension: 320,
+          friction: 16,
+          onUpdate: ([s]) => { icon.style.transform = `scale(${s})`; }
+        });
+        chip.addEventListener('mouseenter', () => sp.to([1.18]));
+        chip.addEventListener('mouseleave', () => sp.to([1]));
+      });
+
+      // Portfolio Card hover + badge rotation
+      document.querySelectorAll('[data-work-card]').forEach((link) => {
+        const card = link.querySelector('.work-card');
+        const badge = link.querySelector('.work-card__badge');
+        if (!card || !badge) return;
+
+        const cardSp = createSpring({
+          from: [0, 1],
+          tension: 260,
+          friction: 22,
+          onUpdate: ([y, s]) => { card.style.transform = `translateY(${y}px) scale(${s})`; }
+        });
+        const badgeSp = createSpring({
+          from: [0, 1],
+          tension: 280,
+          friction: 18,
+          onUpdate: ([rot, s]) => { badge.style.transform = `rotate(${rot}deg) scale(${s})`; }
+        });
+
+        link.addEventListener('mouseenter', () => {
+          cardSp.to([-8, 1.012]);
+          badgeSp.to([45, 1.08]);
+        });
+        link.addEventListener('mouseleave', () => {
+          cardSp.to([0, 1]);
+          badgeSp.to([0, 1]);
+        });
+      });
+
+      // Service Row fill + trailing arrow shift
+      document.querySelectorAll('[data-service-row]').forEach((row) => {
+        const badge = row.querySelector('.service-row__badge');
+        const rowSp = createSpring({
+          from: [0, 1.5, 1.5],
+          tension: 240,
+          friction: 26,
+          onUpdate: ([bgAlpha, pl, pr]) => {
+            row.style.backgroundColor = `rgba(241, 240, 238, ${bgAlpha})`;
+            row.style.paddingLeft = `${pl}rem`;
+            row.style.paddingRight = `${pr}rem`;
+          }
+        });
+        const badgeSp = badge ? createSpring({
+          from: [0],
+          tension: 300,
+          friction: 18,
+          onUpdate: ([x]) => { badge.style.transform = `translateX(${x}px)`; }
+        }) : null;
+
+        row.addEventListener('mouseenter', () => {
+          rowSp.to([1, 2, 1.25]);
+          if (badgeSp) badgeSp.to([5]);
+        });
+        row.addEventListener('mouseleave', () => {
+          rowSp.to([0, 1.5, 1.5]);
+          if (badgeSp) badgeSp.to([0]);
+        });
+      });
+    }
+    initHoverSprings();
+
+    /* ========================================================================
+       10. STATS SCROLL-DRIVEN COUNT-UP (start: "top bottom" -> end: "center center")
+       ======================================================================== */
+    function initStatsCountUp() {
+      const statEls = Array.from(document.querySelectorAll('[data-count-target]'));
+      if (!statEls.length) return;
+
+      let lastRun = 0;
+      function updateStats() {
+        const now = performance.now();
+        if (now - lastRun < 30) return;
+        lastRun = now;
+
+        const vh = window.innerHeight;
+        const centerY = vh * 0.5;
+
+        for (const el of statEls) {
+          const rect = el.getBoundingClientRect();
+          const elCenter = rect.top + rect.height * 0.5;
+          // progress 0 when rect.top == vh, progress 1 when elCenter == vh * 0.5
+          const startPos = vh;
+          const endPos = centerY - rect.height * 0.5;
+          const denom = startPos - endPos;
+          const raw = denom > 0 ? (startPos - rect.top) / denom : 1;
+          const progress = Math.max(0, Math.min(1, raw));
+
+          const target = Number(el.dataset.countTarget);
+          const suffix = el.dataset.countSuffix || '';
+          const val = Math.round(progress * target);
+          el.textContent = `${val}${suffix}`;
+        }
+      }
+
+      window.addEventListener('scroll', updateStats, { passive: true });
+      window.addEventListener('resize', updateStats, { passive: true });
+      updateStats();
+    }
+    initStatsCountUp();
+
+    /* ========================================================================
+       11. NAV MENU OVERLAY
+       ======================================================================== */
+    const navOverlay = document.getElementById('navOverlay');
+    const openMenuBtn = document.getElementById('openMenuBtn');
+    const closeMenuBtn = document.getElementById('closeMenuBtn');
+    const menuStartProjectBtn = document.getElementById('menuStartProjectBtn');
+    let menuOpen = false;
+
+    const menuFadeSpring = createSpring({
+      from: [0],
+      tension: 280,
+      friction: 32,
+      onUpdate: ([op]) => {
+        navOverlay.style.opacity = op;
+      }
+    });
+
+    function openNavMenu() {
+      if (menuOpen) return;
+      menuOpen = true;
+      stopScroll();
+      navOverlay.classList.add('is-mounted');
+      requestAnimationFrame(() => {
+        navOverlay.classList.add('is-open');
+        menuFadeSpring.to([1]);
+      });
+      closeMenuBtn.focus();
+    }
+
+    function closeNavMenu(onClosed) {
+      if (!menuOpen) {
+        if (onClosed) onClosed();
+        return;
+      }
+      menuOpen = false;
+      navOverlay.classList.remove('is-open');
+      menuFadeSpring.to([0], () => {
+        navOverlay.classList.remove('is-mounted');
+        if (!modalOpen) startScroll();
+        if (onClosed) onClosed();
+      });
+    }
+
+    openMenuBtn.addEventListener('click', openNavMenu);
+    closeMenuBtn.addEventListener('click', () => closeNavMenu());
+
+    navOverlay.querySelectorAll('[data-menu-target]').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const targetId = btn.dataset.menuTarget;
+        closeNavMenu(() => scrollToSection(targetId));
+      });
+    });
+
+    navOverlay.querySelectorAll('[data-menu-modal]').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        closeNavMenu(() => openRequestModal());
+      });
+    });
+
+    menuStartProjectBtn.addEventListener('click', () => {
+      closeNavMenu(() => openRequestModal());
+    });
+
+    /* ========================================================================
+       12. REQUEST MODAL OVERLAY (Stubbed Submit)
+       ======================================================================== */
+    const requestModal = document.getElementById('requestModal');
+    const modalPanel = document.getElementById('modalPanel');
+    const closeModalBtn = document.getElementById('closeModalBtn');
+    const modalDoneBtn = document.getElementById('modalDoneBtn');
+    const requestForm = document.getElementById('requestForm');
+    const modalFormWrap = document.getElementById('modalFormWrap');
+    const modalSuccessView = document.getElementById('modalSuccessView');
+    const modalSubmitBtn = document.getElementById('modalSubmitBtn');
+    const modalSubmitLabel = document.getElementById('modalSubmitLabel');
+    let modalOpen = false;
+    let submitting = false;
+
+    const modalSpring = createSpring({
+      from: [0, 28],
+      tension: 260,
+      friction: 30,
+      onUpdate: ([op, y]) => {
+        requestModal.style.opacity = op;
+        modalPanel.style.opacity = op;
+        modalPanel.style.transform = `translateY(${y}px)`;
+      }
+    });
+
+    function openRequestModal() {
+      if (modalOpen) return;
+      modalOpen = true;
+      stopScroll();
+      requestModal.classList.add('is-mounted');
+      modalSpring.set([0, 28]);
+      requestAnimationFrame(() => {
+        modalSpring.to([1, 0]);
+      });
+      const firstInput = requestForm.querySelector('input');
+      if (firstInput) setTimeout(() => firstInput.focus(), 60);
+    }
+
+    function closeRequestModal() {
+      if (!modalOpen) return;
+      modalOpen = false;
+      modalSpring.to([0, 18], () => {
+        requestModal.classList.remove('is-mounted');
+        if (!menuOpen) startScroll();
+      });
+      setTimeout(() => {
+        requestForm.reset();
+        submitting = false;
+        modalSubmitBtn.disabled = false;
+        modalSubmitLabel.textContent = 'Send request';
+        modalFormWrap.classList.remove('is-hidden');
+        modalSuccessView.classList.remove('is-active');
+      }, 300);
+    }
+
+    requestModal.addEventListener('click', (e) => {
+      if (e.target === requestModal) closeRequestModal();
+    });
+    modalPanel.addEventListener('click', (e) => e.stopPropagation());
+    closeModalBtn.addEventListener('click', closeRequestModal);
+    modalDoneBtn.addEventListener('click', closeRequestModal);
+
+    requestForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      if (submitting) return;
+      submitting = true;
+      modalSubmitBtn.disabled = true;
+      modalSubmitLabel.textContent = 'Sending…';
+
+      setTimeout(() => {
+        submitting = false;
+        modalFormWrap.classList.add('is-hidden');
+        modalSuccessView.classList.add('is-active');
+        modalDoneBtn.focus();
+      }, 450);
+    });
+
+    /* ========================================================================
+       13. GLOBAL DELEGATED TRIGGERS & KEYBOARD ESCAPE
+       ======================================================================== */
+    document.querySelectorAll('[data-scroll-target]').forEach((el) => {
+      el.addEventListener('click', (e) => {
+        e.preventDefault();
+        scrollToSection(el.dataset.scrollTarget);
+      });
+    });
+
+    document.querySelectorAll('[data-open-modal]').forEach((el) => {
+      el.addEventListener('click', (e) => {
+        e.preventDefault();
+        openRequestModal();
+      });
+    });
+
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        if (modalOpen) closeRequestModal();
+        else if (menuOpen) closeNavMenu();
+      }
+    });
+  </script>
+</body>
+</html>
